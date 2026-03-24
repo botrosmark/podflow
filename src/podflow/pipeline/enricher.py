@@ -65,4 +65,4 @@ def build_filename(episode: Episode) -> str:
         words = episode.title.split()[:5]
         name_part = f"_{sanitize_filename(' '.join(words))}"
 
-    return f"{date_str}{ep_num}{name_part}.md"
+    return f"{date_str}{ep_num}{name_part}"

@@ -364,6 +364,78 @@ def backfill(podcast: str, count: int) -> None:
         console.print("[dim]No new episodes to add (all may already be tracked).[/dim]")
 
 
+@cli.command()
+def reupload() -> None:
+    """Re-upload existing .md transcripts as Google Docs."""
+    from podflow.drive import (
+        delete_file,
+        download_file_content,
+        get_drive_service,
+        get_podcast_folder_id,
+        upload_markdown,
+    )
+    from podflow.db import update_episode
+
+    settings = load_settings()
+    service = get_drive_service()
+
+    # Find all complete episodes with a Drive file
+    episodes = get_episodes_by_status(EpisodeStatus.complete)
+    targets = [ep for ep in episodes if ep.drive_file_id]
+
+    if not targets:
+        console.print("[dim]No completed episodes with Drive files to re-upload.[/dim]")
+        return
+
+    console.print(f"[bold]Re-uploading {len(targets)} transcript(s) as Google Docs...[/bold]\n")
+
+    success = 0
+    for ep in targets:
+        try:
+            # Download existing content from Drive
+            console.print(f"  [dim]Downloading:[/dim] {ep.podcast_name}: {ep.title[:40]}")
+            content = download_file_content(service, ep.drive_file_id)
+
+            # Determine the target folder
+            podcast = get_podcast_by_slug(ep.podcast_slug)
+            if not podcast:
+                console.print(f"    [red]✗ Unknown podcast slug: {ep.podcast_slug}[/red]")
+                continue
+
+            folder_id = get_podcast_folder_id(
+                service,
+                settings.storage.root_folder_name,
+                podcast.category,
+                podcast.name,
+            )
+
+            # Build filename without .md extension
+            from podflow.pipeline.enricher import build_filename
+            filename = build_filename(ep)
+
+            # Delete old file
+            console.print(f"    [dim]Deleting old .md file...[/dim]")
+            delete_file(service, ep.drive_file_id)
+
+            # Re-upload as Google Doc
+            console.print(f"    [dim]Uploading as Google Doc...[/dim]")
+            result = upload_markdown(service, content, filename, folder_id)
+
+            # Update episode record
+            ep.drive_file_id = result["id"]
+            ep.drive_url = result["url"]
+            update_episode(ep)
+
+            console.print(f"    [green]✓ Done:[/green] {result['url']}")
+            success += 1
+
+        except Exception as e:
+            console.print(f"    [red]✗ Error: {e}[/red]")
+            logger.error(f"Failed to reupload {ep.title}: {e}")
+
+    console.print(f"\n[green]Re-uploaded {success}/{len(targets)} transcript(s) as Google Docs.[/green]")
+
+
 @cli.command("setup-drive")
 def setup_drive_cmd() -> None:
     """Create Google Drive folder structure and authenticate."""

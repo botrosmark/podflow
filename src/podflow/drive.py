@@ -134,11 +134,12 @@ def upload_markdown(
     filename: str,
     folder_id: str,
 ) -> dict:
-    """Upload a markdown file to Drive. Returns {id, webViewLink}."""
+    """Upload markdown content as a Google Doc. Returns {id, url}."""
     media = MediaInMemoryUpload(content.encode("utf-8"), mimetype="text/markdown")
     metadata = {
         "name": filename,
         "parents": [folder_id],
+        "mimeType": "application/vnd.google-apps.document",
     }
     file = service.files().create(
         body=metadata,
@@ -146,3 +147,15 @@ def upload_markdown(
         fields="id, webViewLink",
     ).execute()
     return {"id": file["id"], "url": file.get("webViewLink", "")}
+
+
+def download_file_content(service, file_id: str) -> str:
+    """Download a non-Google-Doc file's content as text."""
+    content = service.files().get_media(fileId=file_id).execute()
+    return content.decode("utf-8")
+
+
+def delete_file(service, file_id: str) -> None:
+    """Delete a file from Google Drive."""
+    service.files().delete(fileId=file_id).execute()
+    logger.info(f"Deleted Drive file: {file_id}")
