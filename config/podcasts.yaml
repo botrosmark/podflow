@@ -1,0 +1,148 @@
+podcasts:
+  # --- INVESTING ---
+  - name: "Invest Like the Best"
+    slug: invest-like-the-best
+    rss_url: "https://feeds.megaphone.fm/investlikethebest"
+    category: investing
+    hosts: ["Patrick O'Shaughnessy"]
+    priority: 1
+    enabled: true
+
+  - name: "All-In Podcast"
+    slug: all-in
+    rss_url: "https://allinchamathjason.libsyn.com/rss"
+    category: tech
+    hosts: ["Chamath Palihapitiya", "Jason Calacanis", "David Sacks", "David Friedberg"]
+    priority: 1
+    enabled: true
+
+  - name: "Odd Lots"
+    slug: odd-lots
+    rss_url: "https://omnycontent.com/d/playlist/e73c998e-6e60-432f-8610-ae210140c5b1/8A94442E-5A74-4FA2-8B8D-AE27003A8D6B/982F5071-765C-403D-969D-AE27003A8D83/podcast.rss"
+    category: investing
+    hosts: ["Tracy Alloway", "Joe Weisenthal"]
+    priority: 2
+    enabled: true
+
+  - name: "Capital Allocators"
+    slug: capital-allocators
+    rss_url: "https://tedseides.libsyn.com/rss"
+    category: investing
+    hosts: ["Ted Seides"]
+    priority: 2
+    enabled: true
+
+  - name: "We Study Billionaires"
+    slug: we-study-billionaires
+    rss_url: "https://feeds.megaphone.fm/PPLLC8974708240"
+    category: investing
+    hosts: ["Stig Brodersen", "Clay Finck"]
+    priority: 2
+    enabled: true
+
+  - name: "Macro Voices"
+    slug: macro-voices
+    rss_url: "https://macrovoices.podbean.com/feed.xml"
+    category: investing
+    hosts: ["Erik Townsend", "Patrick Ceresna"]
+    priority: 1
+    enabled: true
+
+  - name: "Animal Spirits"
+    slug: animal-spirits
+    rss_url: "https://animalspiritspod.libsyn.com/rss"
+    category: investing
+    hosts: ["Michael Batnick", "Ben Carlson"]
+    priority: 3
+    enabled: true
+
+  - name: "The Acquirers Podcast"
+    slug: acquirers-podcast
+    rss_url: "https://anchor.fm/s/9603714/podcast/rss"
+    category: investing
+    hosts: ["Tobias Carlisle"]
+    priority: 3
+    enabled: true
+
+  # --- TECH & VENTURE ---
+  - name: "Acquired"
+    slug: acquired
+    rss_url: "http://www.acquired.fm/episodes?format=rss"
+    category: tech
+    hosts: ["Ben Gilbert", "David Rosenthal"]
+    priority: 1
+    enabled: true
+
+  - name: "BG2Pod"
+    slug: bg2pod
+    rss_url: "https://anchor.fm/s/f06c2370/podcast/rss"
+    category: tech
+    hosts: ["Brad Gerstner", "Bill Gurley"]
+    priority: 1
+    enabled: true
+
+  - name: "20VC"
+    slug: 20vc
+    rss_url: "http://feeds.libsyn.com/61840/rss"
+    category: tech
+    hosts: ["Harry Stebbings"]
+    priority: 2
+    enabled: true
+
+  - name: "a16z Podcast"
+    slug: a16z
+    rss_url: "https://feeds.simplecast.com/JGE3yC0V"
+    category: tech
+    hosts: ["Andreessen Horowitz"]
+    priority: 2
+    enabled: true
+
+  - name: "Lenny's Podcast"
+    slug: lennys-podcast
+    rss_url: "https://api.substack.com/feed/podcast/10845.rss"
+    category: tech
+    hosts: ["Lenny Rachitsky"]
+    priority: 2
+    enabled: true
+
+  - name: "My First Million"
+    slug: my-first-million
+    rss_url: "https://feeds.megaphone.fm/HS2300184645"
+    category: tech
+    hosts: ["Sam Parr", "Shaan Puri"]
+    priority: 3
+    enabled: true
+
+  # --- AI ---
+  - name: "No Priors"
+    slug: no-priors
+    rss_url: "https://feeds.megaphone.fm/nopriors"
+    category: ai
+    hosts: ["Sarah Guo", "Elad Gil"]
+    priority: 1
+    enabled: true
+
+  - name: "Cognitive Revolution"
+    slug: cognitive-revolution
+    rss_url: "https://feeds.megaphone.fm/RINTP3108857801"
+    category: ai
+    hosts: ["Nathan Labenz", "Erik Torenberg"]
+    priority: 1
+    enabled: true
+
+  - name: "Latent Space"
+    slug: latent-space
+    rss_url: "https://api.substack.com/feed/podcast/1084089.rss"
+    category: ai
+    hosts: ["Swyx", "Alessio Fanelli"]
+    priority: 1
+    enabled: true
+
+  # --- GENERAL ---
+  - name: "The Knowledge Project"
+    slug: knowledge-project
+    rss_url: "https://theknowledgeproject.libsyn.com/rss"
+    category: general
+    hosts: ["Shane Parrish"]
+    priority: 3
+    enabled: true

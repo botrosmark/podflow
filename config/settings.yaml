@@ -1,0 +1,22 @@
+polling:
+  interval_minutes: 30
+  max_episodes_per_run: 10
+  lookback_days: 7
+transcription:
+  provider: assemblyai
+  speaker_diarization: true
+  language_code: en
+  poll_interval_seconds: 30
+  max_wait_minutes: 60
+storage:
+  provider: google_drive
+  root_folder_name: Podcast Transcripts
+  root_folder_id: 1gUmebUoeVpZr77HnSmfMAcFcAMt8EMNM
+  transcript_format: markdown
+processing:
+  download_dir: /tmp/podflow/audio
+  keep_audio: false
+analysis:
+  enabled: false
+  provider: anthropic
+  model: claude-sonnet-4-20250514

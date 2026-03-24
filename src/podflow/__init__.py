@@ -1,0 +1,3 @@
+"""Podflow — Podcast content intelligence pipeline."""
+
+__version__ = "0.1.0"
