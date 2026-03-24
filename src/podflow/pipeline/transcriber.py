@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-import time
 
 import requests
 
@@ -20,58 +19,9 @@ def _headers() -> dict:
     return {"Authorization": get_assemblyai_key(), "Content-Type": "application/json"}
 
 
-def transcribe_episode(episode: Episode) -> Transcript:
-    """Submit audio to AssemblyAI and return structured transcript."""
+def _parse_transcript_result(episode: Episode, result: dict) -> Transcript:
+    """Parse a completed AssemblyAI response into a Transcript."""
     settings = load_settings()
-
-    audio_source = episode.audio_url
-    if not audio_source:
-        raise ValueError(f"No audio URL for episode: {episode.title}")
-
-    episode.status = EpisodeStatus.transcribing
-    update_episode(episode)
-
-    logger.info(f"Submitting to AssemblyAI: {episode.title}")
-
-    # Submit transcription request using raw API
-    payload = {
-        "audio_url": audio_source,
-        "speech_models": ["universal-3-pro"],
-        "speaker_labels": settings.transcription.speaker_diarization,
-        "language_code": settings.transcription.language_code,
-    }
-
-    resp = requests.post(f"{API_BASE}/transcript", json=payload, headers=_headers())
-    resp.raise_for_status()
-    transcript_data = resp.json()
-    transcript_id = transcript_data["id"]
-
-    episode.assemblyai_transcript_id = transcript_id
-    update_episode(episode)
-
-    # Poll for completion
-    poll_interval = settings.transcription.poll_interval_seconds
-    max_wait = settings.transcription.max_wait_minutes * 60
-    elapsed = 0
-
-    while elapsed < max_wait:
-        resp = requests.get(f"{API_BASE}/transcript/{transcript_id}", headers=_headers())
-        resp.raise_for_status()
-        result = resp.json()
-        status = result["status"]
-
-        if status == "completed":
-            break
-        elif status == "error":
-            raise RuntimeError(f"Transcription failed: {result.get('error', 'unknown error')}")
-        else:
-            logger.debug(f"  Status: {status}, waiting {poll_interval}s...")
-            time.sleep(poll_interval)
-            elapsed += poll_interval
-    else:
-        raise RuntimeError(f"Transcription timed out after {max_wait}s")
-
-    # Parse results
     segments = []
     for utt in result.get("utterances") or []:
         segments.append(TranscriptSegment(
@@ -86,7 +36,7 @@ def transcribe_episode(episode: Episode) -> Transcript:
     word_count = len(raw_text.split()) if raw_text else 0
     confidence = result.get("confidence") or 0.0
 
-    transcript = Transcript(
+    return Transcript(
         episode_id=episode.id,
         raw_text=raw_text,
         segments=segments,
@@ -97,9 +47,83 @@ def transcribe_episode(episode: Episode) -> Transcript:
         language=settings.transcription.language_code,
     )
 
-    logger.info(
-        f"Transcription complete: {word_count} words, "
-        f"{speakers_detected} speakers, "
-        f"confidence={confidence:.2f}"
-    )
-    return transcript
+
+def submit_transcription(episode: Episode) -> str:
+    """Submit audio to AssemblyAI. Returns transcript ID immediately (non-blocking)."""
+    settings = load_settings()
+
+    if not episode.audio_url:
+        raise ValueError(f"No audio URL for episode: {episode.title}")
+
+    episode.status = EpisodeStatus.transcribing
+    update_episode(episode)
+
+    logger.info(f"Submitting to AssemblyAI: {episode.title}")
+
+    payload = {
+        "audio_url": episode.audio_url,
+        "speech_models": ["universal-3-pro"],
+        "speaker_labels": settings.transcription.speaker_diarization,
+        "language_code": settings.transcription.language_code,
+    }
+
+    resp = requests.post(f"{API_BASE}/transcript", json=payload, headers=_headers())
+    resp.raise_for_status()
+    transcript_id = resp.json()["id"]
+
+    episode.assemblyai_transcript_id = transcript_id
+    update_episode(episode)
+
+    logger.info(f"  Submitted: {transcript_id}")
+    return transcript_id
+
+
+def check_transcription(episode: Episode) -> Transcript | None:
+    """Check if a submitted transcription is complete. Returns Transcript if done, None if still processing."""
+    transcript_id = episode.assemblyai_transcript_id
+    if not transcript_id:
+        raise ValueError(f"No AssemblyAI transcript ID for episode: {episode.title}")
+
+    resp = requests.get(f"{API_BASE}/transcript/{transcript_id}", headers=_headers())
+    resp.raise_for_status()
+    result = resp.json()
+    status = result["status"]
+
+    if status == "completed":
+        transcript = _parse_transcript_result(episode, result)
+        logger.info(
+            f"Transcription complete for '{episode.title}': {transcript.word_count} words, "
+            f"{transcript.speakers_detected} speakers, confidence={transcript.confidence:.2f}"
+        )
+        return transcript
+    elif status == "error":
+        error_msg = result.get("error", "unknown error")
+        episode.status = EpisodeStatus.error
+        episode.error_message = f"AssemblyAI error: {error_msg}"
+        update_episode(episode)
+        raise RuntimeError(f"Transcription failed: {error_msg}")
+    else:
+        logger.debug(f"  '{episode.title}' still {status}")
+        return None
+
+
+# Keep legacy sync function for test-transcribe CLI and backwards compat
+def transcribe_episode(episode: Episode) -> Transcript:
+    """Submit audio to AssemblyAI and poll until complete (blocking)."""
+    import time
+
+    settings = load_settings()
+    submit_transcription(episode)
+
+    poll_interval = settings.transcription.poll_interval_seconds
+    max_wait = settings.transcription.max_wait_minutes * 60
+    elapsed = 0
+
+    while elapsed < max_wait:
+        transcript = check_transcription(episode)
+        if transcript is not None:
+            return transcript
+        time.sleep(poll_interval)
+        elapsed += poll_interval
+
+    raise RuntimeError(f"Transcription timed out after {max_wait}s")

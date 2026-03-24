@@ -47,88 +47,127 @@ def poll() -> None:
         console.print("[dim]No new episodes found.[/dim]")
 
 
-@cli.command()
-def process() -> None:
-    """Process all detected episodes through the full pipeline."""
+def _collect_completed() -> int:
+    """Check transcribing episodes and store any that are done. Returns count of completed."""
     from podflow.pipeline.downloader import cleanup_audio
     from podflow.pipeline.storer import store_transcript
-    from podflow.pipeline.transcriber import transcribe_episode
+    from podflow.pipeline.transcriber import check_transcription
 
-    settings = load_settings()
-    episodes = get_episodes_by_status(EpisodeStatus.detected, limit=settings.polling.max_episodes_per_run)
+    transcribing = get_episodes_by_status(EpisodeStatus.transcribing)
+    if not transcribing:
+        return 0
 
-    if not episodes:
-        console.print("[dim]No episodes to process.[/dim]")
-        return
-
-    console.print(f"[bold]Processing {len(episodes)} episode(s)...[/bold]\n")
-
-    success = 0
-    for ep in episodes:
+    completed = 0
+    for ep in transcribing:
         try:
-            console.print(f"[blue]→ {ep.podcast_name}:[/blue] {ep.title}")
+            transcript = check_transcription(ep)
+            if transcript is None:
+                console.print(f"  [dim]⏳ Still transcribing: {ep.podcast_name}: {ep.title[:40]}[/dim]")
+                continue
 
-            # Transcribe (AssemblyAI fetches audio directly)
-            transcript = transcribe_episode(ep)
-            console.print(f"  [dim]Transcribed: {transcript.word_count} words, {transcript.speakers_detected} speakers[/dim]")
+            console.print(f"  [blue]Transcription ready:[/blue] {ep.podcast_name}: {ep.title[:40]}")
+            console.print(f"    [dim]{transcript.word_count} words, {transcript.speakers_detected} speakers[/dim]")
 
-            # Store to Drive
             ep = store_transcript(ep, transcript)
-            console.print(f"  [green]✓ Uploaded to Drive[/green]")
+            console.print(f"    [green]✓ Uploaded to Drive[/green]")
 
-            # Cleanup
             cleanup_audio(ep)
-            success += 1
+            completed += 1
 
         except Exception as e:
-            logger.error(f"Failed to process {ep.title}: {e}")
+            logger.error(f"Failed to collect {ep.title}: {e}")
             ep.status = EpisodeStatus.error
             ep.error_message = str(e)
             from podflow.db import update_episode
             update_episode(ep)
-            console.print(f"  [red]✗ Error: {e}[/red]")
+            console.print(f"    [red]✗ Error: {e}[/red]")
 
-    console.print(f"\n[bold]Done:[/bold] {success}/{len(episodes)} processed successfully.")
+    return completed
+
+
+def _submit_new(limit: int) -> int:
+    """Submit detected episodes for transcription. Returns count submitted."""
+    from podflow.pipeline.transcriber import submit_transcription
+
+    episodes = get_episodes_by_status(EpisodeStatus.detected, limit=limit)
+    if not episodes:
+        return 0
+
+    submitted = 0
+    for ep in episodes:
+        try:
+            if not ep.audio_url:
+                logger.warning(f"Skipping {ep.title}: no audio URL")
+                continue
+
+            submit_transcription(ep)
+            console.print(f"  [cyan]📤 Submitted:[/cyan] {ep.podcast_name}: {ep.title[:40]}")
+            submitted += 1
+
+        except Exception as e:
+            logger.error(f"Failed to submit {ep.title}: {e}")
+            ep.status = EpisodeStatus.error
+            ep.error_message = str(e)
+            from podflow.db import update_episode
+            update_episode(ep)
+            console.print(f"  [red]✗ Submit error: {e}[/red]")
+
+    return submitted
+
+
+@cli.command()
+def process() -> None:
+    """Collect completed transcriptions and submit new ones."""
+    settings = load_settings()
+
+    # Phase 1: Collect any completed transcriptions
+    transcribing = get_episodes_by_status(EpisodeStatus.transcribing)
+    if transcribing:
+        console.print(f"[bold]Checking {len(transcribing)} transcription(s) in progress...[/bold]")
+        completed = _collect_completed()
+        if completed:
+            console.print(f"[green]{completed} episode(s) completed and uploaded.[/green]\n")
+
+    # Phase 2: Submit new episodes for transcription
+    detected = get_episodes_by_status(EpisodeStatus.detected, limit=settings.polling.max_episodes_per_run)
+    if detected:
+        console.print(f"[bold]Submitting {len(detected)} episode(s) for transcription...[/bold]")
+        submitted = _submit_new(settings.polling.max_episodes_per_run)
+        console.print(f"[cyan]{submitted} episode(s) submitted to AssemblyAI.[/cyan]")
+
+    if not transcribing and not detected:
+        console.print("[dim]Nothing to process.[/dim]")
 
 
 @cli.command()
 def run() -> None:
-    """Poll feeds then process new episodes (designed for cron)."""
+    """Poll feeds, collect completed transcriptions, submit new ones (designed for cron)."""
     from podflow.pipeline.detector import poll_all_feeds
-    from podflow.pipeline.downloader import cleanup_audio
-    from podflow.pipeline.storer import store_transcript
-    from podflow.pipeline.transcriber import transcribe_episode
 
     settings = load_settings()
 
-    # Poll
+    # Step 1: Poll for new episodes
     new_episodes = poll_all_feeds()
     if new_episodes:
         console.print(f"[green]Detected {len(new_episodes)} new episode(s)[/green]")
 
-    # Process
-    episodes = get_episodes_by_status(EpisodeStatus.detected, limit=settings.polling.max_episodes_per_run)
-    if not episodes:
-        console.print("[dim]No episodes to process.[/dim]")
-        return
+    # Step 2: Collect completed transcriptions
+    completed = _collect_completed()
+    if completed:
+        console.print(f"[green]✓ {completed} episode(s) completed and uploaded.[/green]")
 
-    success = 0
-    for ep in episodes:
-        try:
-            transcript = transcribe_episode(ep)
-            ep = store_transcript(ep, transcript)
-            cleanup_audio(ep)
-            success += 1
-            console.print(f"[green]✓[/green] {ep.podcast_name}: {ep.title}")
-        except Exception as e:
-            logger.error(f"Failed: {ep.title}: {e}")
-            ep.status = EpisodeStatus.error
-            ep.error_message = str(e)
-            from podflow.db import update_episode
-            update_episode(ep)
-            console.print(f"[red]✗[/red] {ep.podcast_name}: {ep.title} — {e}")
+    # Step 3: Submit new episodes for transcription
+    submitted = _submit_new(settings.polling.max_episodes_per_run)
+    if submitted:
+        console.print(f"[cyan]{submitted} episode(s) submitted for transcription.[/cyan]")
 
-    console.print(f"\n[bold]{success}/{len(episodes)} processed.[/bold]")
+    # Summary
+    still_transcribing = len(get_episodes_by_status(EpisodeStatus.transcribing))
+    still_detected = len(get_episodes_by_status(EpisodeStatus.detected))
+    if still_transcribing or still_detected:
+        console.print(f"[dim]Queue: {still_transcribing} transcribing, {still_detected} waiting[/dim]")
+    elif not new_episodes and not completed and not submitted:
+        console.print("[dim]All caught up.[/dim]")
 
 
 @cli.command()
