@@ -97,6 +97,9 @@ thought_leaders:
         name: "Doomberg"
         platform: substack
         rss_url: "https://doomberg.substack.com/feed"
+      - type: x_twitter
+        handle: "@DoombergT"
+        rss_url: "https://rss.app/feeds/0jY6dRjGH0lbJFH8.xml"
 
   - name: "Kyla Scanlon"
     slug: kyla-scanlon
@@ -240,6 +243,9 @@ thought_leaders:
         name: "Stratechery"
         platform: substack
         rss_url: "https://stratechery.com/feed/"
+      - type: x_twitter
+        handle: "@stratechery"
+        rss_url: "https://rss.app/feeds/WBc3sf28NbRJ6kVS.xml"
 
   - name: "Byrne Hobart"
     slug: byrne-hobart
@@ -346,6 +352,10 @@ thought_leaders:
         name: "Fabricated Knowledge"
         platform: substack
         rss_url: "https://www.fabricatedknowledge.com/feed"
+      - type: x_twitter
+        handle: "@DylanPatel_"
+        name: "Dylan Patel (SemiAnalysis)"
+        rss_url: "https://rss.app/feeds/hYXJJmfZGeqk5WTP.xml"
 
   # ============================================
   # GENERAL / MINDSET
@@ -373,6 +383,9 @@ thought_leaders:
         name: "The Curiosity Chronicle"
         platform: substack
         rss_url: "https://sahilbloom.substack.com/feed"
+      - type: x_twitter
+        handle: "@SahilBloom"
+        rss_url: "https://rss.app/feeds/xlIwTvJJzM2Qn4Wz.xml"
 
   # ============================================
   # HORMOZI ORBIT & FOUNDER EXECUTION
@@ -389,6 +402,9 @@ thought_leaders:
         rss_url: "https://feeds.captivate.fm/the-game-alex-hormozi/"
         hosts: ["Alex Hormozi"]
         category: business
+      - type: x_twitter
+        handle: "@AlexHormozi"
+        rss_url: "https://rss.app/feeds/90SZJKuNCLiWPsW4.xml"
 
   - name: "Codie Sanchez"
     slug: codie-sanchez
@@ -400,6 +416,9 @@ thought_leaders:
         name: "Contrarian Thinking"
         platform: substack
         rss_url: "https://codiersanchez.substack.com/feed"
+      - type: x_twitter
+        handle: "@Codie_Sanchez"
+        rss_url: "https://rss.app/feeds/aMPBYtYt4LchJpdc.xml"
 
   - name: "Justin Welsh"
     slug: justin-welsh
@@ -410,7 +429,39 @@ thought_leaders:
       - type: newsletter
         name: "The Saturday Solopreneur"
         rss_url: "https://www.justinwelsh.me/feed"
-        enabled: true
+      - type: x_twitter
+        handle: "@thejustinwelsh"
+        rss_url: "https://rss.app/feeds/gIxxX5LTH7WaCm7c.xml"
+
+  - name: "Leila Hormozi"
+    slug: leila-hormozi
+    tags: [founder, execution, team, scaling]
+    priority: 1
+    enabled: true
+    sources:
+      - type: x_twitter
+        handle: "@LeilaHormozi"
+        rss_url: "https://rss.app/feeds/MBfAC3WF42QOgRDK.xml"
+
+  - name: "Keith Wasserman"
+    slug: keith-wasserman
+    tags: [founder, compounding, execution]
+    priority: 2
+    enabled: true
+    sources:
+      - type: x_twitter
+        handle: "@Keith_Wasserman"
+        rss_url: "https://rss.app/feeds/HKrxqc1StpBDjFzu.xml"
+
+  - name: "Dan Koe"
+    slug: dan-koe
+    tags: [creator, solo-business, ai, content]
+    priority: 2
+    enabled: true
+    sources:
+      - type: x_twitter
+        handle: "@thedankoe"
+        rss_url: "https://rss.app/feeds/fEpJ2iy7kflBFiMb.xml"
 
   # ============================================
   # MARKETING & BRAND STRATEGY
