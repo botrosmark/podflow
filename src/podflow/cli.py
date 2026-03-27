@@ -40,11 +40,35 @@ def cli(verbose: bool) -> None:
     """podflow — Podcast content intelligence pipeline."""
     setup_logging(verbose)
     init_db()
+    # Sync thought leaders from YAML to DB on every CLI invocation
+    from podflow.db import sync_thought_leaders_from_config
+    sync_thought_leaders_from_config()
 
 
 @cli.command()
 def poll() -> None:
-    """Check RSS feeds and detect new episodes."""
+    """Check all sources (podcasts, newsletters, X feeds) for new content."""
+    from podflow.pipeline.detector import poll_all_sources
+
+    new_items = poll_all_sources()
+    if new_items:
+        from collections import Counter
+        by_type = Counter(item.source_type.value for item in new_items)
+        console.print(f"\n[green]Detected {len(new_items)} new item(s):[/green]")
+        for t, c in by_type.items():
+            console.print(f"  {t}: {c}")
+        for item in new_items[:10]:
+            console.print(f"  • {item.thought_leader_slug}: {item.title[:50]}")
+        if len(new_items) > 10:
+            console.print(f"  ... and {len(new_items) - 10} more")
+    else:
+        console.print("[dim]No new content found.[/dim]")
+
+
+# Keep legacy poll for backward compat in cron
+@cli.command("poll-legacy", hidden=True)
+def poll_legacy() -> None:
+    """Legacy: Check RSS feeds for new podcast episodes only."""
     from podflow.pipeline.detector import poll_all_feeds
 
     new_episodes = poll_all_feeds()
@@ -930,3 +954,165 @@ def search(query: str, podcast: str | None, since: str | None, limit: int) -> No
             highlighted = pattern.sub(lambda m: f"[bold yellow]{m.group()}[/bold yellow]", ctx_line.strip())
             console.print(f"  {highlighted}")
         console.print()
+
+
+# ============================================
+# THOUGHT LEADER MANAGEMENT
+# ============================================
+
+@cli.group()
+def leaders() -> None:
+    """Manage thought leaders and their sources."""
+    pass
+
+
+@leaders.command("list")
+def leaders_list() -> None:
+    """Show all thought leaders and their sources."""
+    from podflow.config import load_thought_leaders
+
+    tls = load_thought_leaders()
+    if not tls:
+        console.print("[dim]No thought leaders configured. Add them to config/thought_leaders.yaml[/dim]")
+        return
+
+    table = Table(title="Thought Leaders")
+    table.add_column("Slug", style="cyan")
+    table.add_column("Name")
+    table.add_column("Tags")
+    table.add_column("Sources", justify="center")
+    table.add_column("Pri", justify="center", width=3)
+    table.add_column("On", justify="center", width=3)
+
+    for tl in sorted(tls, key=lambda x: x.priority):
+        src_types = [s.type.value[0].upper() for s in tl.sources if s.enabled]  # P, N, X, Y
+        enabled = "[green]✓[/green]" if tl.enabled else "[red]✗[/red]"
+        table.add_row(
+            tl.slug,
+            tl.name,
+            ", ".join(tl.tags[:3]),
+            " ".join(src_types),
+            str(tl.priority),
+            enabled,
+        )
+
+    console.print(table)
+    console.print(f"\n[dim]{len(tls)} thought leaders, "
+                  f"{sum(len(tl.sources) for tl in tls)} sources "
+                  f"(P=podcast, N=newsletter, X=x/twitter, Y=youtube)[/dim]")
+
+
+@leaders.command("show")
+@click.argument("slug")
+def leaders_show(slug: str) -> None:
+    """Show detail for a thought leader."""
+    from podflow.config import get_thought_leader_by_slug
+
+    tl = get_thought_leader_by_slug(slug)
+    if not tl:
+        console.print(f"[red]Unknown thought leader: {slug}[/red]")
+        return
+
+    console.print(f"[bold]{tl.name}[/bold] ({tl.slug})")
+    console.print(f"Tags: {', '.join(tl.tags)}")
+    console.print(f"Priority: {tl.priority}  Enabled: {tl.enabled}\n")
+
+    table = Table(title="Sources")
+    table.add_column("Type")
+    table.add_column("Name")
+    table.add_column("URL/Handle", max_width=50)
+    table.add_column("Enabled")
+
+    for src in tl.sources:
+        enabled = "[green]✓[/green]" if src.enabled else "[red]✗[/red]"
+        url = src.rss_url or src.handle or src.web_url or "—"
+        table.add_row(src.type.value, src.name or "—", url[:50], enabled)
+
+    console.print(table)
+
+
+@leaders.command("add")
+@click.argument("slug")
+@click.option("--name", required=True, help="Display name")
+@click.option("--tag", multiple=True, help="Tags (can specify multiple)")
+@click.option("--priority", default=2, help="Priority (1=highest)")
+def leaders_add(slug: str, name: str, tag: tuple, priority: int) -> None:
+    """Add a new thought leader."""
+    from podflow.config import load_thought_leaders, save_thought_leaders
+    from podflow.models import ThoughtLeaderConfig
+
+    leaders_list_data = load_thought_leaders()
+    if any(tl.slug == slug for tl in leaders_list_data):
+        console.print(f"[red]Thought leader '{slug}' already exists[/red]")
+        return
+
+    new_tl = ThoughtLeaderConfig(
+        name=name,
+        slug=slug,
+        tags=list(tag) if tag else [],
+        priority=priority,
+    )
+    leaders_list_data.append(new_tl)
+    save_thought_leaders(leaders_list_data)
+    console.print(f"[green]Added thought leader: {name} ({slug})[/green]")
+    console.print(f"[dim]Add sources with: podflow leaders add-source {slug} --type newsletter --rss-url <url>[/dim]")
+
+
+@leaders.command("add-source")
+@click.argument("slug")
+@click.option("--type", "src_type", required=True, type=click.Choice(["podcast", "newsletter", "x_twitter", "youtube"]))
+@click.option("--name", default=None, help="Source display name")
+@click.option("--rss-url", default=None, help="RSS feed URL")
+@click.option("--handle", default=None, help="X/Twitter handle")
+def leaders_add_source(slug: str, src_type: str, name: str | None, rss_url: str | None, handle: str | None) -> None:
+    """Add a source to a thought leader."""
+    from podflow.config import load_thought_leaders, save_thought_leaders
+    from podflow.models import SourceConfig, SourceType
+
+    all_leaders = load_thought_leaders()
+    tl = next((t for t in all_leaders if t.slug == slug), None)
+    if not tl:
+        console.print(f"[red]Unknown thought leader: {slug}[/red]")
+        return
+
+    new_source = SourceConfig(
+        type=SourceType(src_type),
+        name=name,
+        rss_url=rss_url,
+        handle=handle,
+    )
+    tl.sources.append(new_source)
+    save_thought_leaders(all_leaders)
+    console.print(f"[green]Added {src_type} source to {tl.name}[/green]")
+
+
+@leaders.command("disable")
+@click.argument("slug")
+def leaders_disable(slug: str) -> None:
+    """Disable a thought leader."""
+    from podflow.config import load_thought_leaders, save_thought_leaders
+
+    all_leaders = load_thought_leaders()
+    tl = next((t for t in all_leaders if t.slug == slug), None)
+    if not tl:
+        console.print(f"[red]Unknown thought leader: {slug}[/red]")
+        return
+    tl.enabled = False
+    save_thought_leaders(all_leaders)
+    console.print(f"[yellow]Disabled: {tl.name}[/yellow]")
+
+
+@leaders.command("enable")
+@click.argument("slug")
+def leaders_enable(slug: str) -> None:
+    """Enable a thought leader."""
+    from podflow.config import load_thought_leaders, save_thought_leaders
+
+    all_leaders = load_thought_leaders()
+    tl = next((t for t in all_leaders if t.slug == slug), None)
+    if not tl:
+        console.print(f"[red]Unknown thought leader: {slug}[/red]")
+        return
+    tl.enabled = True
+    save_thought_leaders(all_leaders)
+    console.print(f"[green]Enabled: {tl.name}[/green]")

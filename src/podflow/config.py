@@ -8,7 +8,7 @@ from pathlib import Path
 import yaml
 from dotenv import load_dotenv
 
-from podflow.models import PodcastConfig, Settings
+from podflow.models import PodcastConfig, Settings, ThoughtLeaderConfig, SourceConfig
 
 load_dotenv()
 
@@ -41,7 +41,74 @@ def save_settings(settings: Settings) -> None:
         yaml.dump(settings.model_dump(), f, default_flow_style=False, sort_keys=False)
 
 
+# ============================================
+# Thought Leader config (new)
+# ============================================
+
+def load_thought_leaders() -> list[ThoughtLeaderConfig]:
+    """Load thought leaders from config/thought_leaders.yaml."""
+    path = CONFIG_DIR / "thought_leaders.yaml"
+    if not path.exists():
+        return []
+    with open(path) as f:
+        raw = yaml.safe_load(f) or {}
+    leaders = []
+    for tl in raw.get("thought_leaders", []):
+        sources_raw = tl.pop("sources", [])
+        sources = [SourceConfig(**s) for s in sources_raw]
+        leaders.append(ThoughtLeaderConfig(**tl, sources=sources))
+    return leaders
+
+
+def get_thought_leader_by_slug(slug: str) -> ThoughtLeaderConfig | None:
+    for tl in load_thought_leaders():
+        if tl.slug == slug:
+            return tl
+    return None
+
+
+def save_thought_leaders(leaders: list[ThoughtLeaderConfig]) -> None:
+    """Write thought leaders back to YAML."""
+    path = CONFIG_DIR / "thought_leaders.yaml"
+    data = {"thought_leaders": []}
+    for tl in leaders:
+        d = tl.model_dump()
+        # Convert SourceType enums to strings for YAML
+        for s in d.get("sources", []):
+            if hasattr(s.get("type"), "value"):
+                s["type"] = s["type"].value
+        data["thought_leaders"].append(d)
+    with open(path, "w") as f:
+        yaml.dump(data, f, default_flow_style=False, sort_keys=False, allow_unicode=True)
+
+
+# ============================================
+# Legacy podcast config (backward compat)
+# ============================================
+
 def load_podcasts() -> list[PodcastConfig]:
+    """Load podcasts. Tries thought_leaders.yaml first, falls back to podcasts.yaml."""
+    # Try new format first
+    leaders = load_thought_leaders()
+    if leaders:
+        podcasts = []
+        for tl in leaders:
+            for src in tl.sources:
+                if src.type == "podcast" and src.enabled:
+                    podcasts.append(PodcastConfig(
+                        name=src.name or tl.name,
+                        slug=tl.slug if len([s for s in tl.sources if s.type == "podcast"]) == 1 else f"{tl.slug}-podcast",
+                        rss_url=src.rss_url or "",
+                        category=src.category or (tl.tags[0] if tl.tags else "general"),
+                        hosts=src.hosts,
+                        audience="mark",  # legacy field
+                        priority=tl.priority,
+                        enabled=tl.enabled,
+                    ))
+        if podcasts:
+            return podcasts
+
+    # Fall back to old format
     path = CONFIG_DIR / "podcasts.yaml"
     if not path.exists():
         return []

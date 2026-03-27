@@ -232,3 +232,89 @@ Return ONLY valid JSON:
 
 EPISODE ANALYSES:
 {analyses_json}"""
+
+
+NEWSLETTER_ANALYSIS_PROMPT = """You are an expert analyst extracting actionable intelligence from a newsletter article.
+
+The author is an original thinker — extract their specific positions, frameworks, and calls. This is already edited and concise, so go deep on the substance.
+
+WRITING STYLE — Smart Brevity:
+- Lead with the most important words. Max 2 sentences per point.
+- Be specific: name numbers, tickers, platforms. No hedging.
+- Every content hook headline should work as a standalone scroll-stopper.
+
+Extract ALL of these:
+
+1. **Company Mentions**: Ticker if public. Sentiment. 1-2 sentence thesis.
+2. **Macro Calls**: Specific macro/market call in one sentence.
+3. **Content Hooks**: Scroll-stopping ideas. Headline + one-sentence insight. Assign content_pillar: luxury_brand | ai_business | founder_mindset | marketing_innovation | creator_economy.
+4. **Marketing Tactics**: Platform, numbers, and application. (Only if relevant.)
+5. **People Mentioned**: Notable people and context.
+6. **Contrarian Takes**: Where the author disagrees with consensus. Highest signal.
+7. **why_it_matters**: One punchy sentence.
+
+Return ONLY valid JSON:
+{{
+  "episode_id": "{episode_id}",
+  "podcast_name": "{podcast_name}",
+  "episode_title": "{episode_title}",
+  "audience": "both",
+  "one_sentence_summary": "string",
+  "topic_tags": ["string"],
+  "companies": [{{"name": "string", "ticker": "string|null", "sentiment": "bullish|bearish|neutral|mixed", "thesis": "string", "speaker": "string|null", "context_quote": "string", "approximate_location": "early|middle|late"}}],
+  "macro_calls": [{{"theme": "string", "position": "string", "speaker": "string|null", "context_quote": "string", "approximate_location": "early|middle|late"}}],
+  "content_hooks": [{{"headline": "string", "insight": "string", "angle": "string", "content_pillar": "string", "context_quote": "string", "why_it_matters": "string"}}],
+  "marketing_tactics": [{{"tactic": "string", "platform": "string|null", "result_cited": "string|null", "applicable_to": "string", "speaker": "string|null", "context_quote": "string"}}],
+  "people_mentioned": [{{"name": "string", "context": "string", "sentiment": "string"}}],
+  "contrarian_takes": ["string"],
+  "why_it_matters_mark": "string|null",
+  "why_it_matters_brooke": "string|null"
+}}
+
+NEWSLETTER: {podcast_name}
+ARTICLE: {episode_title}
+ITEM ID: {episode_id}
+
+ARTICLE TEXT:
+{transcript}"""
+
+
+X_THREAD_ANALYSIS_PROMPT = """You are an expert analyst extracting intelligence from X/Twitter posts and threads.
+
+These are short-form — prioritize contrarian takes, original frameworks, quick theses, and content hooks. Most tweets won't have company mentions or macro calls, and that's fine. Focus on what IS there.
+
+WRITING STYLE — Smart Brevity. Be direct. One idea per point.
+
+Extract what's present (skip empty sections):
+
+1. **Companies**: Only if specifically discussed with a thesis.
+2. **Macro Calls**: Only if a specific market/economic call is made.
+3. **Content Hooks**: The tweet itself may BE the hook. Reframe as a headline.
+4. **Contrarian Takes**: Where the author pushes back on consensus. Highest priority.
+5. **People Mentioned**: If they tag or reference notable people.
+6. **why_it_matters**: One sentence.
+
+Return ONLY valid JSON:
+{{
+  "episode_id": "{episode_id}",
+  "podcast_name": "{podcast_name}",
+  "episode_title": "{episode_title}",
+  "audience": "both",
+  "one_sentence_summary": "string",
+  "topic_tags": ["string"],
+  "companies": [],
+  "macro_calls": [],
+  "content_hooks": [{{"headline": "string", "insight": "string", "angle": "string", "content_pillar": "string", "context_quote": "string", "why_it_matters": "string"}}],
+  "marketing_tactics": [],
+  "people_mentioned": [],
+  "contrarian_takes": ["string"],
+  "why_it_matters_mark": "string|null",
+  "why_it_matters_brooke": "string|null"
+}}
+
+AUTHOR: {podcast_name}
+POST: {episode_title}
+ITEM ID: {episode_id}
+
+TEXT:
+{transcript}"""

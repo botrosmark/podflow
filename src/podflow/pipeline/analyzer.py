@@ -12,9 +12,12 @@ import anthropic
 from podflow.analysis.models import EpisodeAnalysis
 from podflow.analysis.prompts import (
     BROOKE_ANALYSIS_PROMPT,
+    COMBINED_ANALYSIS_PROMPT,
     MARK_ANALYSIS_PROMPT,
+    NEWSLETTER_ANALYSIS_PROMPT,
     WEEKLY_BROOKE_PROMPT,
     WEEKLY_MARK_PROMPT,
+    X_THREAD_ANALYSIS_PROMPT,
 )
 from podflow.config import load_podcasts, load_settings
 from podflow.db import get_analysis, get_unanalyzed_episodes, save_analysis
@@ -123,8 +126,9 @@ def _is_junk_episode(title: str, transcript_text: str) -> bool:
 
 def analyze_episode(episode_id: int, podcast_slug: str, podcast_name: str,
                     episode_title: str, transcript_path: str,
-                    reanalyze: bool = False) -> EpisodeAnalysis | None:
-    """Analyze a single episode transcript with Claude."""
+                    reanalyze: bool = False,
+                    source_type: str = "podcast") -> EpisodeAnalysis | None:
+    """Analyze a single content item with Claude."""
     settings = load_settings()
     model = settings.analysis.model
     max_tokens = settings.analysis.max_transcript_tokens
@@ -153,10 +157,14 @@ def analyze_episode(episode_id: int, podcast_slug: str, podcast_name: str,
 
     audience = _get_audience_for_podcast(podcast_slug)
 
-    # Pick the right prompt — single call for all audience types
-    from podflow.analysis.prompts import COMBINED_ANALYSIS_PROMPT
-
-    if audience == "both":
+    # Pick prompt based on content type first, then audience
+    if source_type == "newsletter":
+        prompt_template = NEWSLETTER_ANALYSIS_PROMPT
+        label = "Newsletter"
+    elif source_type == "x_twitter":
+        prompt_template = X_THREAD_ANALYSIS_PROMPT
+        label = "X thread"
+    elif audience == "both":
         prompt_template = COMBINED_ANALYSIS_PROMPT
         label = "Combined"
     elif audience == "brooke":
@@ -241,6 +249,61 @@ def analyze_all(reanalyze: bool = False) -> list[EpisodeAnalysis]:
                 results.append(analysis)
         except Exception as e:
             logger.error(f"Failed to analyze {ep.title}: {e}")
+
+    return results
+
+
+def analyze_all_content(reanalyze: bool = False) -> list[EpisodeAnalysis]:
+    """Analyze all unanalyzed content items (podcasts, newsletters, X threads)."""
+    from podflow.db import (
+        get_content_items_by_status,
+        get_unanalyzed_content,
+        save_content_analysis,
+        get_content_analysis,
+    )
+    from podflow.models import ContentStatus
+
+    if reanalyze:
+        items = get_content_items_by_status(ContentStatus.complete)
+        items = [i for i in items if i.transcript_local_path]
+    else:
+        items = get_unanalyzed_content()
+
+    results = []
+    for item in items:
+        try:
+            # Check if already analyzed in new table
+            if not reanalyze and get_content_analysis(item.id):
+                continue
+
+            analysis = analyze_episode(
+                episode_id=item.id,
+                podcast_slug=item.thought_leader_slug,
+                podcast_name=item.thought_leader_slug,  # Used as source label in prompts
+                episode_title=item.title,
+                transcript_path=item.transcript_local_path,
+                reanalyze=reanalyze,
+                source_type=item.source_type.value,
+            )
+            if analysis:
+                # Also save to new content_analysis table
+                save_content_analysis(
+                    content_item_id=item.id,
+                    analysis_json=json.dumps(analysis.model_dump(), default=str),
+                    summary=analysis.one_sentence_summary,
+                    topic_tags=json.dumps(analysis.topic_tags),
+                    companies_json=json.dumps([c.model_dump() for c in analysis.companies]),
+                    macro_calls_json=json.dumps([m.model_dump() for m in analysis.macro_calls]),
+                    content_hooks_json=json.dumps([h.model_dump() for h in analysis.content_hooks]),
+                    marketing_tactics_json=json.dumps([t.model_dump() for t in analysis.marketing_tactics]),
+                    people_json=json.dumps([p.model_dump() for p in analysis.people_mentioned]),
+                    contrarian_takes_json=json.dumps(analysis.contrarian_takes),
+                    why_it_matters=analysis.why_it_matters_mark or analysis.why_it_matters_brooke,
+                    source_type=item.source_type.value,
+                )
+                results.append(analysis)
+        except Exception as e:
+            logger.error(f"Failed to analyze {item.title}: {e}")
 
     return results
 
