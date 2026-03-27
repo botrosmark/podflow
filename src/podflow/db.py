@@ -10,7 +10,7 @@ from pathlib import Path
 from podflow.config import get_data_dir
 from podflow.models import Episode, EpisodeStatus
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 
 def _get_db_path() -> Path:
@@ -54,6 +54,7 @@ def init_db() -> None:
                 drive_file_id TEXT,
                 drive_url TEXT,
                 assemblyai_transcript_id TEXT,
+                audience TEXT,
                 summary TEXT,
                 key_quotes TEXT,
                 themes TEXT,
@@ -64,11 +65,44 @@ def init_db() -> None:
             CREATE INDEX IF NOT EXISTS idx_episodes_status ON episodes(status);
             CREATE INDEX IF NOT EXISTS idx_episodes_slug ON episodes(podcast_slug);
             CREATE INDEX IF NOT EXISTS idx_episodes_published ON episodes(published_date);
+
+            CREATE TABLE IF NOT EXISTS episode_analysis (
+                episode_id TEXT PRIMARY KEY,
+                analysis_json TEXT NOT NULL,
+                one_sentence_summary TEXT,
+                topic_tags TEXT,
+                companies_json TEXT,
+                macro_calls_json TEXT,
+                content_hooks_json TEXT,
+                marketing_tactics_json TEXT,
+                people_json TEXT,
+                contrarian_takes_json TEXT,
+                why_it_matters_mark TEXT,
+                why_it_matters_brooke TEXT,
+                analyzed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
+
+            CREATE TABLE IF NOT EXISTS briefs_sent (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                brief_type TEXT NOT NULL,
+                sent_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                episodes_covered TEXT NOT NULL,
+                recipient TEXT
+            );
         """)
-        # Set schema version if not present
+
+        # Migration: add audience column if it doesn't exist
+        cursor = conn.execute("PRAGMA table_info(episodes)")
+        columns = {row["name"] for row in cursor.fetchall()}
+        if "audience" not in columns:
+            conn.execute("ALTER TABLE episodes ADD COLUMN audience TEXT")
+
+        # Set schema version
         row = conn.execute("SELECT version FROM schema_version LIMIT 1").fetchone()
         if row is None:
             conn.execute("INSERT INTO schema_version (version) VALUES (?)", (SCHEMA_VERSION,))
+        elif row["version"] < SCHEMA_VERSION:
+            conn.execute("UPDATE schema_version SET version = ?", (SCHEMA_VERSION,))
         conn.commit()
     finally:
         conn.close()
@@ -109,6 +143,7 @@ def _episode_to_params(ep: Episode) -> dict:
         "drive_file_id": ep.drive_file_id,
         "drive_url": ep.drive_url,
         "assemblyai_transcript_id": ep.assemblyai_transcript_id,
+        "audience": ep.audience,
         "summary": ep.summary,
         "key_quotes": json.dumps(ep.key_quotes) if ep.key_quotes else None,
         "themes": json.dumps(ep.themes) if ep.themes else None,
@@ -210,6 +245,97 @@ def reset_episode_for_retry(episode_id: int) -> None:
         conn.execute(
             "UPDATE episodes SET status = 'detected', error_message = NULL WHERE id = ?",
             (episode_id,),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+# --- Analysis tables ---
+
+def save_analysis(episode_id: str, analysis_json: str, summary: str, topic_tags: str,
+                  companies_json: str, macro_calls_json: str, content_hooks_json: str,
+                  marketing_tactics_json: str, people_json: str, contrarian_takes_json: str,
+                  why_mark: str | None, why_brooke: str | None) -> None:
+    conn = get_connection()
+    try:
+        conn.execute("""
+            INSERT OR REPLACE INTO episode_analysis
+            (episode_id, analysis_json, one_sentence_summary, topic_tags,
+             companies_json, macro_calls_json, content_hooks_json,
+             marketing_tactics_json, people_json, contrarian_takes_json,
+             why_it_matters_mark, why_it_matters_brooke, analyzed_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+        """, (episode_id, analysis_json, summary, topic_tags,
+              companies_json, macro_calls_json, content_hooks_json,
+              marketing_tactics_json, people_json, contrarian_takes_json,
+              why_mark, why_brooke))
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def get_analysis(episode_id: str) -> dict | None:
+    conn = get_connection()
+    try:
+        row = conn.execute(
+            "SELECT * FROM episode_analysis WHERE episode_id = ?", (episode_id,)
+        ).fetchone()
+        return dict(row) if row else None
+    finally:
+        conn.close()
+
+
+def get_unanalyzed_episodes() -> list[Episode]:
+    """Get completed episodes that haven't been analyzed yet."""
+    conn = get_connection()
+    try:
+        rows = conn.execute("""
+            SELECT e.* FROM episodes e
+            LEFT JOIN episode_analysis ea ON CAST(e.id AS TEXT) = ea.episode_id
+            WHERE e.status = 'complete'
+            AND e.transcript_local_path IS NOT NULL
+            AND ea.episode_id IS NULL
+            ORDER BY e.published_date DESC
+        """).fetchall()
+        return [_row_to_episode(r) for r in rows]
+    finally:
+        conn.close()
+
+
+def get_analyzed_episodes_since(since: datetime) -> list[dict]:
+    """Get analyzed episodes since a given datetime. Returns analysis rows joined with episode data."""
+    conn = get_connection()
+    try:
+        rows = conn.execute("""
+            SELECT e.id, e.podcast_slug, e.podcast_name, e.title, e.published_date,
+                   e.duration_seconds, e.guests, e.drive_url, e.audience,
+                   ea.analysis_json, ea.one_sentence_summary, ea.analyzed_at
+            FROM episode_analysis ea
+            JOIN episodes e ON CAST(e.id AS TEXT) = ea.episode_id
+            WHERE e.published_date >= ? OR ea.analyzed_at >= ?
+            ORDER BY e.published_date DESC
+        """, (since.isoformat(), since.isoformat())).fetchall()
+        result = []
+        for r in rows:
+            d = dict(r)
+            d["guests"] = json.loads(d.get("guests") or "[]")
+            if d.get("published_date"):
+                d["published_date"] = datetime.fromisoformat(d["published_date"])
+            if d.get("analyzed_at"):
+                d["analyzed_at"] = datetime.fromisoformat(d["analyzed_at"])
+            result.append(d)
+        return result
+    finally:
+        conn.close()
+
+
+def record_brief_sent(brief_type: str, episode_ids: list[str], recipient: str) -> None:
+    conn = get_connection()
+    try:
+        conn.execute(
+            "INSERT INTO briefs_sent (brief_type, episodes_covered, recipient) VALUES (?, ?, ?)",
+            (brief_type, json.dumps(episode_ids), recipient),
         )
         conn.commit()
     finally:

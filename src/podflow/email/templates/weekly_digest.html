@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #1a1a1a; font-size: 15px; line-height: 1.6; }
+  .container { max-width: 600px; margin: 0 auto; background: #ffffff; }
+  .header { background: #1a1a1a; color: #ffffff; padding: 20px 28px; }
+  .header h1 { margin: 0; font-size: 20px; font-weight: 600; letter-spacing: -0.3px; }
+  .header .subtitle { color: #888; font-size: 12px; margin-top: 2px; }
+  .item { padding: 22px 28px; border-bottom: 3px solid #f0f0f0; }
+  .item-num { font-size: 12px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .lede { font-size: 16px; line-height: 1.4; margin-bottom: 10px; }
+  .lede strong { font-weight: 700; }
+  .label { font-weight: 700; color: #1a1a1a; }
+  .bullet-list { list-style: none; padding: 0; margin: 10px 0; }
+  .bullet-list li { padding: 5px 0; color: #444; font-size: 14px; line-height: 1.5; }
+  .bullet-list li strong { color: #1a1a1a; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 10px 0; }
+  th { text-align: left; padding: 6px 10px; background: #f8f8f8; border-bottom: 2px solid #ddd; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #666; }
+  td { padding: 6px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+  .one-thing { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 16px 20px; margin: 0; }
+  .one-thing p { margin: 0; }
+  .one-thing strong { color: #92400e; }
+  .series-card { background: #f0f9ff; border-left: 3px solid #0ea5e9; padding: 12px 16px; margin-bottom: 10px; }
+  .series-card h4 { margin: 0 0 6px 0; font-size: 14px; font-weight: 700; }
+  .series-card ol { margin: 4px 0; padding-left: 20px; font-size: 13px; color: #444; }
+  .footer { padding: 14px 28px; text-align: center; color: #aaa; font-size: 11px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>{{ title }}</h1>
+    <div class="subtitle">{{ subtitle }}</div>
+  </div>
+
+  {% if brief_type == "mark" %}
+
+  {# ===== THE ONE THING ===== #}
+  {% if one_thing %}
+  <div class="item">
+    <div class="item-num">The One Thing</div>
+    <div class="one-thing">
+      <p><strong>{{ one_thing.insight }}</strong></p>
+      <p style="font-size: 13px; color: #666; margin-top: 6px;"><span class="label">Why it matters:</span> {{ one_thing.why_it_matters }}</p>
+      <p style="font-size: 12px; color: #888; margin-top: 4px;">{{ one_thing.source }}</p>
+    </div>
+  </div>
+  {% endif %}
+
+  {# ===== THEME CONVERGENCE ===== #}
+  {% if theme_convergence %}
+  <div class="item">
+    <div class="item-num">1. Theme Convergence</div>
+    <div class="lede"><strong>Topics that appeared across 3+ shows independently.</strong> This cross-show signal is where the alpha lives.</div>
+    <ul class="bullet-list">
+      {% for t in theme_convergence %}
+      <li><strong>{{ t.theme }}.</strong> {{ t.synthesis | truncate(140) }}
+      <br><span style="color: #888; font-size: 12px;">Appeared in: {{ t.shows | join(', ') }}</span></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {# ===== COMPANY HEAT MAP ===== #}
+  {% if company_heat_map %}
+  <div class="item">
+    <div class="item-num">2. Company Heat Map</div>
+    <div class="lede"><strong>Most-mentioned companies</strong> with aggregated sentiment.</div>
+    <table>
+      <tr><th>Company</th><th>Ticker</th><th>#</th><th>Sentiment</th><th>Thesis</th></tr>
+      {% for c in company_heat_map[:10] %}
+      <tr>
+        <td style="font-weight: 600;">{{ c.name }}</td>
+        <td style="font-family: monospace;">{{ c.ticker or '—' }}</td>
+        <td>{{ c.mention_count }}</td>
+        <td>{{ c.net_sentiment }}</td>
+        <td style="font-size: 12px;">{{ c.key_thesis | truncate(80) }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  {% endif %}
+
+  {# ===== CONSENSUS VS CONTRARIAN ===== #}
+  {% if consensus_vs_contrarian %}
+  <div class="item">
+    <div class="item-num">3. Consensus vs. Contrarian</div>
+    <ul class="bullet-list">
+      {% for item in consensus_vs_contrarian %}
+      <li><strong>{{ item.topic }}.</strong>
+      <br><span class="label">Consensus:</span> <span class="label-text">{{ item.consensus | truncate(100) }}</span>
+      {% if item.contrarian_view %}<br><span class="label">Yes, but:</span> <span class="label-text">{{ item.contrarian_view | truncate(100) }}</span>{% if item.contrarian_source %} <span style="color: #888; font-size: 12px;">({{ item.contrarian_source }})</span>{% endif %}{% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {# ===== BIGGEST MACRO CALL ===== #}
+  {% if biggest_macro_call %}
+  <div class="item">
+    <div class="item-num">4. Biggest Macro Call</div>
+    <div class="lede"><strong>{{ biggest_macro_call.call }}</strong></div>
+    <p style="margin: 0;"><span class="label">Why it matters:</span> <span class="label-text">{{ biggest_macro_call.implications }}</span></p>
+    <p style="color: #888; font-size: 12px; margin: 4px 0 0;">{{ biggest_macro_call.source }}</p>
+  </div>
+  {% endif %}
+
+  {% elif brief_type == "brooke" %}
+
+  {# ===== THE ONE THING ===== #}
+  {% if one_thing %}
+  <div class="item">
+    <div class="item-num">The One Thing</div>
+    <div class="one-thing">
+      <p><strong>{{ one_thing.insight }}</strong></p>
+      <p style="font-size: 13px; color: #666; margin-top: 6px;"><span class="label">Why it matters:</span> {{ one_thing.why_it_matters }}</p>
+      <p style="font-size: 12px; color: #888; margin-top: 4px;">{{ one_thing.source }}</p>
+    </div>
+  </div>
+  {% endif %}
+
+  {# ===== CONTENT THEMES ===== #}
+  {% if content_themes %}
+  <div class="item">
+    <div class="item-num">1. What's Trending</div>
+    <div class="lede"><strong>Topics that keep coming up</strong> across this week's shows.</div>
+    <ul class="bullet-list">
+      {% for t in content_themes %}
+      <li><strong>{{ t.theme }}.</strong> {{ t.why_trending | truncate(120) }}
+      <br><span style="color: #888; font-size: 12px;">Shows: {{ t.shows | join(', ') }}</span></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {# ===== CAROUSEL SERIES ===== #}
+  {% if carousel_series %}
+  <div class="item">
+    <div class="item-num">2. Carousel Series Ideas</div>
+    <div class="lede"><strong>Multi-post series</strong> — not one-offs. Designed for sustained engagement.</div>
+    {% for s in carousel_series %}
+    <div class="series-card">
+      <h4>{{ s.series_title }}</h4>
+      <ol>
+        {% for post in s.posts %}
+        <li>{{ post }}</li>
+        {% endfor %}
+      </ol>
+      <span style="color: #888; font-size: 11px;">Source: {{ s.source_episodes | join(', ') }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {# ===== BEST FOUNDER STORY ===== #}
+  {% if best_founder_story %}
+  <div class="item">
+    <div class="item-num">3. Founder Story of the Week</div>
+    <div class="lede"><strong>{{ best_founder_story.founder }}.</strong> {{ best_founder_story.story | truncate(200) }}</div>
+    <p style="margin: 0;"><span class="label">Why it resonates:</span> <span class="label-text">{{ best_founder_story.why_it_resonates }}</span></p>
+    <p style="color: #888; font-size: 12px; margin: 4px 0 0;">{{ best_founder_story.source }}</p>
+  </div>
+  {% endif %}
+
+  {# ===== AI TOOL OF THE WEEK ===== #}
+  {% if ai_tool_of_week %}
+  <div class="item">
+    <div class="item-num">4. AI Tool of the Week</div>
+    <div class="lede"><strong>{{ ai_tool_of_week.tool_or_tactic }}.</strong></div>
+    <p style="margin: 0;"><span class="label">How to use it:</span> <span class="label-text">{{ ai_tool_of_week.how_to_use }}</span></p>
+    <p style="color: #888; font-size: 12px; margin: 4px 0 0;">{{ ai_tool_of_week.source }}</p>
+  </div>
+  {% endif %}
+
+  {% endif %}
+
+  <div class="footer">Podflow · {{ generated_at }} · {{ episode_count }} episodes analyzed</div>
+</div>
+</body>
+</html>

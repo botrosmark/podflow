@@ -24,6 +24,7 @@ class PodcastConfig(BaseModel):
     rss_url: str
     category: str
     hosts: list[str] = Field(default_factory=list)
+    audience: str = "mark"
     priority: int = 2
     enabled: bool = True
 
@@ -49,6 +50,7 @@ class Episode(BaseModel):
     drive_file_id: Optional[str] = None
     drive_url: Optional[str] = None
     assemblyai_transcript_id: Optional[str] = None
+    audience: Optional[str] = None
     # Future analysis fields
     summary: Optional[str] = None
     key_quotes: Optional[list[str]] = None
@@ -93,6 +95,7 @@ class StorageSettings(BaseModel):
     root_folder_name: str = "Podcast Transcripts"
     root_folder_id: Optional[str] = None
     transcript_format: str = "markdown"
+    idea_bank_spreadsheet_id: Optional[str] = None
 
 
 class ProcessingSettings(BaseModel):
@@ -104,6 +107,16 @@ class AnalysisSettings(BaseModel):
     enabled: bool = False
     provider: str = "anthropic"
     model: str = "claude-sonnet-4-20250514"
+    max_transcript_tokens: int = 120000
+
+
+class EmailSettings(BaseModel):
+    enabled: bool = True
+    provider: str = "resend"
+    mark_recipients: list[str] = Field(default_factory=lambda: ["botros.mark.a@gmail.com"])
+    brooke_recipients: list[str] = Field(default_factory=lambda: ["botros.mark.a@gmail.com"])
+    brief_time: str = "06:00"
+    lookback_hours: int = 24
 
 
 class Settings(BaseModel):
@@ -112,3 +125,4 @@ class Settings(BaseModel):
     storage: StorageSettings = StorageSettings()
     processing: ProcessingSettings = ProcessingSettings()
     analysis: AnalysisSettings = AnalysisSettings()
+    email: EmailSettings = EmailSettings()

@@ -106,6 +106,7 @@ def detect_new_episodes(podcast: PodcastConfig, lookback_days: int = 7) -> list[
             episode_number=_get_episode_number(entry),
             guests=guests,
             rss_guid=guid,
+            audience=podcast.audience,
         )
 
         ep_id = insert_episode(ep)

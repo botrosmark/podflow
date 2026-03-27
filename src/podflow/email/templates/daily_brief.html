@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #1a1a1a; font-size: 15px; line-height: 1.6; }
+  .container { max-width: 600px; margin: 0 auto; background: #ffffff; }
+  .header { background: #1a1a1a; color: #ffffff; padding: 20px 28px; }
+  .header h1 { margin: 0; font-size: 20px; font-weight: 600; letter-spacing: -0.3px; }
+  .header .subtitle { color: #888; font-size: 12px; margin-top: 2px; }
+  .item { padding: 22px 28px; border-bottom: 3px solid #f0f0f0; }
+  .item-num { font-size: 12px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .lede { font-size: 16px; line-height: 1.4; margin-bottom: 10px; }
+  .lede strong { font-weight: 700; }
+  .label { font-weight: 700; color: #1a1a1a; }
+  .label-text { color: #444; }
+  .bullet-list { list-style: none; padding: 0; margin: 10px 0; }
+  .bullet-list li { padding: 4px 0; color: #444; font-size: 14px; line-height: 1.5; }
+  .bullet-list li strong { color: #1a1a1a; }
+  .ticker { font-family: 'SF Mono', 'Fira Code', monospace; font-weight: 600; font-size: 13px; }
+  .go-deeper { font-size: 12px; margin-top: 6px; }
+  .go-deeper a { color: #0066cc; text-decoration: none; font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 10px 0; }
+  th { text-align: left; padding: 6px 10px; background: #f8f8f8; border-bottom: 2px solid #ddd; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #666; }
+  td { padding: 6px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+  .highlight-box { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 14px 18px; margin: 10px 0; }
+  .highlight-box strong { color: #92400e; }
+  .s-bullish { color: #16a34a; font-weight: 700; }
+  .s-bearish { color: #dc2626; font-weight: 700; }
+  .s-neutral { color: #6b7280; }
+  .s-mixed { color: #d97706; font-weight: 700; }
+  .footer { padding: 14px 28px; text-align: center; color: #aaa; font-size: 11px; }
+  .spacer { height: 8px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>{{ title }}</h1>
+    <div class="subtitle">{{ subtitle }}</div>
+  </div>
+
+  {% if brief_type == "mark" %}
+
+  {# ===== 1. SIGNAL ===== #}
+  {% if companies or macro_calls %}
+  <div class="item">
+    <div class="item-num">1. Signal</div>
+    {% if companies %}
+    <div class="lede"><strong>{{ companies | length }} companies flagged</strong> across {{ episodes | length }} episodes this cycle.</div>
+    <ul class="bullet-list">
+      {% for c in companies[:8] %}
+      <li>
+        <strong>{{ c.name }}{% if c.ticker %} <span class="ticker">({{ c.ticker }})</span>{% endif %}</strong>
+        — <span class="s-{{ c.sentiment }}">{{ c.sentiment }}</span>.
+        {{ c.thesis | truncate(120) }}
+        {% if c.source_url %}<span class="go-deeper"><a href="{{ c.source_url }}">Go deeper →</a></span>{% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if macro_calls %}
+    <div class="spacer"></div>
+    <p style="margin: 0;"><span class="label">Macro calls:</span></p>
+    <ul class="bullet-list">
+      {% for m in macro_calls[:5] %}
+      <li><strong>{{ m.theme }}.</strong> {{ m.position | truncate(100) }} <span style="color: #888;">— {{ m.speaker or m.source_podcast }}</span></li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {# ===== 2. CONTRARIAN CORNER ===== #}
+  {% if contrarian_takes %}
+  <div class="item">
+    <div class="item-num">2. Contrarian Corner</div>
+    <div class="lede"><strong>Where smart people disagree</strong> with each other or consensus.</div>
+    <ul class="bullet-list">
+      {% for take in contrarian_takes[:5] %}
+      <li><strong>{{ take.take | truncate(140) }}</strong>
+      <br><span style="color: #888; font-size: 12px;">{{ take.source }}</span></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {# ===== 3. RADAR ===== #}
+  {% if entity_table %}
+  <div class="item">
+    <div class="item-num">3. Radar</div>
+    <div class="lede"><strong>Entities mentioned across multiple shows</strong> are bolded — that's the signal.</div>
+    <table>
+      <tr><th>Entity</th><th>Type</th><th>#</th><th>Sentiment</th></tr>
+      {% for e in entity_table[:12] %}
+      <tr>
+        <td{% if e.mentions > 1 %} style="font-weight: 700;"{% endif %}>{{ e.name }}</td>
+        <td>{{ e.type }}</td>
+        <td>{{ e.mentions }}</td>
+        <td class="s-{{ e.sentiment }}">{{ e.sentiment }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  {% endif %}
+
+  {# ===== 4. CONTENT FUEL ===== #}
+  {% if content_hooks %}
+  <div class="item">
+    <div class="item-num">4. Content Fuel</div>
+    <div class="lede"><strong>Hooks that could work</strong> as posts or threads.</div>
+    <ul class="bullet-list">
+      {% for hook in content_hooks[:5] %}
+      <li><strong>{{ hook.headline }}.</strong> {{ hook.insight | truncate(100) }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% elif brief_type == "brooke" %}
+
+  {# ===== 1. TACTICS ===== #}
+  {% if tactics %}
+  <div class="item">
+    <div class="item-num">1. Tactics</div>
+    <div class="lede"><strong>{{ tactics | length }} specific marketing moves</strong> pulled from this cycle's episodes.</div>
+    <ul class="bullet-list">
+      {% for t in tactics[:8] %}
+      <li>
+        <strong>{{ t.tactic }}{% if t.platform %} [{{ t.platform }}]{% endif %}.</strong>
+        {% if t.result_cited %}Result: {{ t.result_cited }}. {% endif %}
+        {{ t.applicable_to | truncate(100) }}
+        {% if t.source_url %}<span class="go-deeper"><a href="{{ t.source_url }}">Go deeper →</a></span>{% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {# ===== 2. BRAND PLAYBOOK ===== #}
+  {% if brand_insights %}
+  <div class="item">
+    <div class="item-num">2. Brand Playbook</div>
+    <div class="lede"><strong>What's working</strong> for premium and luxury brands right now.</div>
+    <ul class="bullet-list">
+      {% for b in brand_insights[:6] %}
+      <li><strong>{{ b.name }}.</strong> {{ b.thesis | truncate(120) }}
+      <br><span style="color: #888; font-size: 12px;">{{ b.source }}</span></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {# ===== 3. CONTENT CALENDAR ===== #}
+  {% if content_hooks %}
+  <div class="item">
+    <div class="item-num">3. Content Calendar</div>
+    <div class="lede"><strong>Ready-to-use content ideas</strong> for carousel, reel, or story.</div>
+    <ul class="bullet-list">
+      {% for hook in content_hooks[:7] %}
+      <li>
+        <strong>{{ hook.headline }}.</strong> {{ hook.insight | truncate(100) }}
+        <br><span style="color: #888; font-size: 12px;">Pillar: {{ hook.content_pillar }}{% if hook.source %} · {{ hook.source }}{% endif %}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {# ===== 4. FOUNDER GEMS ===== #}
+  {% if founder_gems %}
+  <div class="item">
+    <div class="item-num">4. Founder Gems</div>
+    <div class="lede"><strong>Quotable insights</strong> for carousel content.</div>
+    <ul class="bullet-list">
+      {% for gem in founder_gems[:5] %}
+      <li>"<strong>{{ gem.quote | truncate(120) }}</strong>"
+      <br><span style="color: #888; font-size: 12px;">— {{ gem.speaker }}, {{ gem.source }}</span></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% endif %}
+
+  {# ===== TOP IDEAS (both briefs) ===== #}
+  {% if top_ideas %}
+  <div class="item">
+    <div class="item-num">Top Ideas — Idea Bank</div>
+    <div class="lede"><strong>Highest-scoring ideas</strong> across all episodes. Ideas mentioned by multiple shows rise to the top.</div>
+    <ul class="bullet-list">
+      {% for idea in top_ideas[:5] %}
+      <li><strong>{{ idea.idea | truncate(80) }}</strong> <span style="color: #888; font-size: 12px;">(score: {{ idea.score }})</span>
+      <br><span style="color: #444; font-size: 13px;">{{ idea.detail | truncate(100) }}</span></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {# ===== EPISODE INDEX ===== #}
+  {% if episodes %}
+  <div class="item">
+    <div class="item-num">Episode Index</div>
+    {% for ep in episodes %}
+    <div style="margin-bottom: 8px; font-size: 13px;">
+      <strong style="color: #666;">{{ ep.podcast_name }}</strong>
+      {% if ep.drive_url %}<a href="{{ ep.drive_url }}" style="color: #0066cc; text-decoration: none;">{{ ep.title | truncate(50) }}</a>{% else %}{{ ep.title | truncate(50) }}{% endif %}
+      <br><span style="color: #999; font-size: 11px;">{{ ep.date }}{% if ep.duration %} · {{ ep.duration }}{% endif %}{% if ep.tags %} · {{ ep.tags }}{% endif %}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="footer">Podflow · {{ generated_at }}</div>
+</div>
+</body>
+</html>

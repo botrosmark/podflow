@@ -13,10 +13,21 @@ storage:
   root_folder_name: Podcast Transcripts
   root_folder_id: 1gUmebUoeVpZr77HnSmfMAcFcAMt8EMNM
   transcript_format: markdown
+  idea_bank_spreadsheet_id: 1uZ_ZKmeVK01BeE0CpWHpkCzTGd1C78ne_YACTC1tb2c
 processing:
   download_dir: /tmp/podflow/audio
   keep_audio: false
 analysis:
-  enabled: false
+  enabled: true
   provider: anthropic
   model: claude-sonnet-4-20250514
+  max_transcript_tokens: 120000
+email:
+  enabled: true
+  provider: resend
+  mark_recipients:
+  - botros.mark.a@gmail.com
+  brooke_recipients:
+  - botros.mark.a@gmail.com
+  brief_time: 06:00
+  lookback_hours: 24

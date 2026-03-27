@@ -1,10 +1,15 @@
 podcasts:
+  # ============================================
+  # MARK'S FEED — Investing, Tech, AI
+  # ============================================
+
   # --- INVESTING ---
   - name: "Invest Like the Best"
     slug: invest-like-the-best
     rss_url: "https://feeds.megaphone.fm/investlikethebest"
     category: investing
     hosts: ["Patrick O'Shaughnessy"]
+    audience: mark
     priority: 1
     enabled: true
 
@@ -13,6 +18,7 @@ podcasts:
     rss_url: "https://allinchamathjason.libsyn.com/rss"
     category: tech
     hosts: ["Chamath Palihapitiya", "Jason Calacanis", "David Sacks", "David Friedberg"]
+    audience: both
     priority: 1
     enabled: true
 
@@ -21,6 +27,7 @@ podcasts:
     rss_url: "https://omnycontent.com/d/playlist/e73c998e-6e60-432f-8610-ae210140c5b1/8A94442E-5A74-4FA2-8B8D-AE27003A8D6B/982F5071-765C-403D-969D-AE27003A8D83/podcast.rss"
     category: investing
     hosts: ["Tracy Alloway", "Joe Weisenthal"]
+    audience: mark
     priority: 2
     enabled: true
 
@@ -29,6 +36,7 @@ podcasts:
     rss_url: "https://tedseides.libsyn.com/rss"
     category: investing
     hosts: ["Ted Seides"]
+    audience: mark
     priority: 2
     enabled: true
 
@@ -37,6 +45,7 @@ podcasts:
     rss_url: "https://feeds.megaphone.fm/PPLLC8974708240"
     category: investing
     hosts: ["Stig Brodersen", "Clay Finck"]
+    audience: mark
     priority: 2
     enabled: true
 
@@ -45,6 +54,7 @@ podcasts:
     rss_url: "https://macrovoices.podbean.com/feed.xml"
     category: investing
     hosts: ["Erik Townsend", "Patrick Ceresna"]
+    audience: mark
     priority: 1
     enabled: true
 
@@ -53,6 +63,7 @@ podcasts:
     rss_url: "https://animalspiritspod.libsyn.com/rss"
     category: investing
     hosts: ["Michael Batnick", "Ben Carlson"]
+    audience: mark
     priority: 3
     enabled: true
 
@@ -61,6 +72,7 @@ podcasts:
     rss_url: "https://anchor.fm/s/9603714/podcast/rss"
     category: investing
     hosts: ["Tobias Carlisle"]
+    audience: mark
     priority: 3
     enabled: true
 
@@ -70,6 +82,7 @@ podcasts:
     rss_url: "http://www.acquired.fm/episodes?format=rss"
     category: tech
     hosts: ["Ben Gilbert", "David Rosenthal"]
+    audience: mark
     priority: 1
     enabled: true
 
@@ -78,6 +91,7 @@ podcasts:
     rss_url: "https://anchor.fm/s/f06c2370/podcast/rss"
     category: tech
     hosts: ["Brad Gerstner", "Bill Gurley"]
+    audience: mark
     priority: 1
     enabled: true
 
@@ -86,6 +100,7 @@ podcasts:
     rss_url: "http://feeds.libsyn.com/61840/rss"
     category: tech
     hosts: ["Harry Stebbings"]
+    audience: mark
     priority: 2
     enabled: true
 
@@ -94,6 +109,7 @@ podcasts:
     rss_url: "https://feeds.simplecast.com/JGE3yC0V"
     category: tech
     hosts: ["Andreessen Horowitz"]
+    audience: mark
     priority: 2
     enabled: true
 
@@ -102,6 +118,7 @@ podcasts:
     rss_url: "https://api.substack.com/feed/podcast/10845.rss"
     category: tech
     hosts: ["Lenny Rachitsky"]
+    audience: both
     priority: 2
     enabled: true
 
@@ -110,6 +127,7 @@ podcasts:
     rss_url: "https://feeds.megaphone.fm/HS2300184645"
     category: tech
     hosts: ["Sam Parr", "Shaan Puri"]
+    audience: both
     priority: 3
     enabled: true
 
@@ -119,6 +137,7 @@ podcasts:
     rss_url: "https://feeds.megaphone.fm/nopriors"
     category: ai
     hosts: ["Sarah Guo", "Elad Gil"]
+    audience: mark
     priority: 1
     enabled: true
 
@@ -127,6 +146,7 @@ podcasts:
     rss_url: "https://feeds.megaphone.fm/RINTP3108857801"
     category: ai
     hosts: ["Nathan Labenz", "Erik Torenberg"]
+    audience: mark
     priority: 1
     enabled: true
 
@@ -135,6 +155,7 @@ podcasts:
     rss_url: "https://api.substack.com/feed/podcast/1084089.rss"
     category: ai
     hosts: ["Swyx", "Alessio Fanelli"]
+    audience: mark
     priority: 1
     enabled: true
 
@@ -144,5 +165,159 @@ podcasts:
     rss_url: "https://theknowledgeproject.libsyn.com/rss"
     category: general
     hosts: ["Shane Parrish"]
+    audience: both
     priority: 3
+    enabled: true
+
+  # ============================================
+  # BROOKE'S FEED — Marketing, Brand, Creator
+  # ============================================
+
+  # --- MARKETING & BRAND STRATEGY ---
+  - name: "Marketing Against the Grain"
+    slug: marketing-against-grain
+    rss_url: "https://feeds.megaphone.fm/marketingagainstthegrain"
+    category: marketing
+    hosts: ["Kipp Bodnar", "Kieran Flanagan"]
+    audience: brooke
+    priority: 1
+    enabled: true
+
+  - name: "The Marketing Millennials"
+    slug: marketing-millennials
+    rss_url: "https://feeds.megaphone.fm/the-marketing-millennials"
+    category: marketing
+    hosts: ["Daniel Murray"]
+    audience: brooke
+    priority: 2
+    enabled: true
+
+  - name: "Perpetual Traffic"
+    slug: perpetual-traffic
+    rss_url: "https://feeds.captivate.fm/perpetual-traffic/"
+    category: marketing
+    hosts: ["Ralph Burns", "Kasim Aslam"]
+    audience: brooke
+    priority: 1
+    enabled: true
+
+  - name: "Marketing School"
+    slug: marketing-school
+    rss_url: "https://feeds.megaphone.fm/ESHO5419936864"
+    category: marketing
+    hosts: ["Neil Patel", "Eric Siu"]
+    audience: brooke
+    priority: 2
+    enabled: true
+
+  # --- CREATOR ECONOMY & INFLUENCER ---
+  - name: "Colin and Samir"
+    slug: colin-and-samir
+    rss_url: "https://feeds.megaphone.fm/LI6529969937"
+    category: creator
+    hosts: ["Colin Rosenblum", "Samir Chaudry"]
+    audience: brooke
+    priority: 2
+    enabled: true
+
+  - name: "The Skinny Confidential"
+    slug: skinny-confidential
+    rss_url: "https://tschimandher.libsyn.com/rss"
+    category: creator
+    hosts: ["Lauryn Evarts", "Michael Bosstick"]
+    audience: brooke
+    priority: 2
+    enabled: true
+
+  # --- BUSINESS & FOUNDER MINDSET ---
+  - name: "The Game w/ Alex Hormozi"
+    slug: hormozi-game
+    rss_url: "https://feeds.captivate.fm/the-game-alex-hormozi/"
+    category: business
+    hosts: ["Alex Hormozi"]
+    audience: both
+    priority: 1
+    enabled: true
+
+  - name: "School w/ Alex Hormozi"
+    slug: hormozi-school
+    rss_url: "https://feeds.megaphone.fm/hormozischool"
+    category: business
+    hosts: ["Alex Hormozi"]
+    audience: both
+    priority: 1
+    enabled: false
+
+  - name: "How I Built This"
+    slug: how-i-built-this
+    rss_url: "https://rss.art19.com/how-i-built-this"
+    category: business
+    hosts: ["Guy Raz"]
+    audience: brooke
+    priority: 1
+    enabled: true
+
+  - name: "The Diary of a CEO"
+    slug: diary-of-a-ceo
+    rss_url: "https://rss2.flightcast.com/xmsftuzjjykcmqwolaqn6mdn"
+    category: business
+    hosts: ["Steven Bartlett"]
+    audience: brooke
+    priority: 1
+    enabled: true
+
+  - name: "Amy Porterfield Show"
+    slug: amy-porterfield
+    rss_url: "https://feeds.megaphone.fm/YAP3268529120"
+    category: business
+    hosts: ["Amy Porterfield"]
+    audience: brooke
+    priority: 2
+    enabled: true
+
+  # --- LUXURY / DTC / E-COMMERCE ---
+  - name: "Glossy Podcast"
+    slug: glossy
+    rss_url: "https://feeds.megaphone.fm/DIGI4036367252"
+    category: luxury
+    hosts: ["Jill Manoff"]
+    audience: brooke
+    priority: 1
+    enabled: true
+
+  - name: "Limited Supply"
+    slug: limited-supply
+    rss_url: "https://feeds.megaphone.fm/limited-supply"
+    category: marketing
+    hosts: ["Nik Sharma", "Moiz Ali"]
+    audience: brooke
+    priority: 1
+    enabled: true
+
+  - name: "Earned"
+    slug: earned
+    rss_url: "https://earnedpodcast.libsyn.com/rss"
+    category: marketing
+    hosts: ["Conor Begley"]
+    audience: brooke
+    priority: 2
+    enabled: true
+
+  # --- AI FOR BUSINESS (non-technical) ---
+  - name: "The AI Breakdown"
+    slug: ai-breakdown
+    rss_url: "https://anchor.fm/s/f7cac464/podcast/rss"
+    category: ai
+    hosts: ["Nathaniel Whittemore"]
+    audience: both
+    priority: 1
+    enabled: true
+
+  - name: "Marketing AI Show"
+    slug: marketing-ai
+    rss_url: "https://feeds.megaphone.fm/marketingai"
+    category: ai
+    hosts: ["Paul Roetzer", "Mike Kaput"]
+    audience: brooke
+    priority: 1
     enabled: true

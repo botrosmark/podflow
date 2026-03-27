@@ -17,6 +17,8 @@ data/
 
 # Credentials
 credentials/
+client_secret*.json
+assembly-key*
 
 # Temp audio
 /tmp/podflow/

@@ -22,6 +22,10 @@ CATEGORY_FOLDER_MAP = {
     "tech": "Tech",
     "ai": "AI",
     "general": "General",
+    "marketing": "Marketing",
+    "creator": "Creator",
+    "luxury": "Luxury",
+    "business": "Business",
 }
 
 
