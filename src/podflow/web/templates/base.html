@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>{% block title %}Podflow{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  <style>
+    body { -webkit-font-smoothing: antialiased; }
+    .action-btn { cursor: pointer; padding: 6px; border-radius: 6px; transition: all 0.15s; font-size: 18px; line-height: 1; border: none; background: none; }
+    .action-btn:hover { background: rgba(0,0,0,0.05); }
+    .card { transition: all 0.2s; border-left: 3px solid transparent; }
+    .card:hover { border-left-color: #3b82f6; background: #fafafa; }
+    .pill { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .pill-company { background: #dcfce7; color: #166534; }
+    .pill-macro { background: #dbeafe; color: #1e40af; }
+    .pill-hook { background: #fce7f3; color: #9d174d; }
+    .pill-tactic { background: #e0e7ff; color: #3730a3; }
+    .pill-contrarian { background: #fef3c7; color: #92400e; }
+    .pill-podcast { background: #f3f4f6; color: #374151; }
+    .pill-newsletter { background: #ede9fe; color: #5b21b6; }
+    .pill-x_twitter { background: #e0f2fe; color: #0369a1; }
+    .idea-carousel { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding-bottom: 8px; }
+    .idea-carousel::-webkit-scrollbar { display: none; }
+    .idea-card { scroll-snap-align: start; min-width: 160px; max-width: 200px; flex-shrink: 0; }
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #e5e7eb; padding-bottom: env(safe-area-inset-bottom); z-index: 50; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; padding: 8px 0; font-size: 10px; color: #9ca3af; text-decoration: none; }
+    .nav-item.active { color: #1a1a1a; }
+    .nav-item span { margin-top: 2px; }
+    @media (min-width: 768px) { .bottom-nav { display: none; } }
+    .sidebar { display: none; }
+    @media (min-width: 768px) { .sidebar { display: flex; flex-direction: column; width: 56px; position: fixed; left: 0; top: 0; bottom: 0; background: #1a1a1a; z-index: 50; transition: width 0.2s; } .sidebar:hover { width: 200px; } .sidebar .nav-label { display: none; white-space: nowrap; } .sidebar:hover .nav-label { display: inline; } .main-content { margin-left: 56px; } }
+    .sentiment-bullish { color: #16a34a; font-weight: 700; }
+    .sentiment-bearish { color: #dc2626; font-weight: 700; }
+    .sentiment-mixed { color: #d97706; font-weight: 700; }
+  </style>
+</head>
+<body class="h-full bg-gray-50 text-gray-900">
+
+  <!-- Desktop Sidebar -->
+  <nav class="sidebar">
+    <a href="/" class="flex items-center gap-3 px-4 py-4 text-white hover:bg-white/10">
+      <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      <span class="nav-label font-semibold">Podflow</span>
+    </a>
+    <a href="/" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/10 {% if active_tab == 'today' %}text-white bg-white/10{% endif %}">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+      <span class="nav-label">Today</span>
+    </a>
+    <a href="/feed" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/10 {% if active_tab == 'feed' %}text-white bg-white/10{% endif %}">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+      <span class="nav-label">Feed</span>
+    </a>
+    <a href="/leaders" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/10 {% if active_tab == 'leaders' %}text-white bg-white/10{% endif %}">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+      <span class="nav-label">Leaders</span>
+    </a>
+    <a href="/feed?filter=starred" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/10 {% if active_tab == 'saved' %}text-white bg-white/10{% endif %}">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+      <span class="nav-label">Saved</span>
+    </a>
+    <a href="/search" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/10">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <span class="nav-label">Search</span>
+    </a>
+    <div class="flex-1"></div>
+    <a href="/settings" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/10">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      <span class="nav-label">Settings</span>
+    </a>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content pb-20 md:pb-4">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Mobile Bottom Nav -->
+  <nav class="bottom-nav flex justify-around md:hidden">
+    <a href="/" class="nav-item {% if active_tab == 'today' %}active{% endif %}">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+      <span>Today</span>
+    </a>
+    <a href="/feed" class="nav-item {% if active_tab == 'feed' %}active{% endif %}">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+      <span>Feed</span>
+    </a>
+    <a href="/leaders" class="nav-item {% if active_tab == 'leaders' %}active{% endif %}">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+      <span>Leaders</span>
+    </a>
+    <a href="/feed?filter=starred" class="nav-item {% if active_tab == 'saved' %}active{% endif %}">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+      <span>Saved</span>
+    </a>
+    <a href="/settings" class="nav-item {% if active_tab == 'settings' %}active{% endif %}">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

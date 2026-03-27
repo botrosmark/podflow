@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% set active_tab = "feed" %}
+
+{% block title %}{{ item.title[:50] }} — Podflow{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 pt-4">
+
+  <!-- Back button -->
+  <a href="javascript:history.back()" class="text-sm text-blue-600 hover:text-blue-800 mb-4 inline-block">&larr; Back</a>
+
+  <!-- Header -->
+  <div class="bg-white rounded-lg border p-5 shadow-sm mb-4">
+    <div class="flex items-center gap-2 mb-3">
+      <span class="pill pill-{{ item.source_type.value }}">{{ item.source_type.value | replace('_', ' ') }}</span>
+      <span class="text-sm font-medium text-gray-600">{{ item.thought_leader_slug }}</span>
+    </div>
+    <h1 class="text-lg font-bold leading-snug">{{ item.title }}</h1>
+    <div class="text-xs text-gray-400 mt-2">
+      {% if item.published_date %}{{ item.published_date.strftime('%B %d, %Y') }}{% endif %}
+      {% if item.duration_seconds %} · {{ (item.duration_seconds / 60) | int }}min{% endif %}
+      {% if item.drive_url %} · <a href="{{ item.drive_url }}" class="text-blue-600 hover:underline" target="_blank">View transcript</a>{% endif %}
+    </div>
+  </div>
+
+  {% if analysis %}
+
+  <!-- Summary -->
+  {% if analysis.one_sentence_summary %}
+  <div class="bg-white rounded-lg border p-4 shadow-sm mb-4">
+    <p class="text-base font-medium">{{ analysis.one_sentence_summary }}</p>
+  </div>
+  {% endif %}
+
+  <!-- Why it matters -->
+  {% if analysis.why_it_matters_mark or analysis.why_it_matters_brooke %}
+  <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg mb-4">
+    <p class="text-xs font-bold text-amber-800 uppercase tracking-wider mb-1">Why it matters</p>
+    {% if persona == 'mark' and analysis.why_it_matters_mark %}
+    <p class="text-sm text-amber-900">{{ analysis.why_it_matters_mark }}</p>
+    {% elif analysis.why_it_matters_brooke %}
+    <p class="text-sm text-amber-900">{{ analysis.why_it_matters_brooke }}</p>
+    {% elif analysis.why_it_matters_mark %}
+    <p class="text-sm text-amber-900">{{ analysis.why_it_matters_mark }}</p>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- Companies -->
+  {% if analysis.companies %}
+  <div class="bg-white rounded-lg border p-4 shadow-sm mb-4">
+    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Companies</h2>
+    {% for c in analysis.companies %}
+    <div class="mb-3 {% if not loop.last %}pb-3 border-b border-gray-100{% endif %}">
+      <div class="flex items-center gap-2">
+        <span class="font-semibold text-sm">{{ c.name }}</span>
+        {% if c.ticker %}<span class="text-xs font-mono text-gray-500">({{ c.ticker }})</span>{% endif %}
+        <span class="text-xs font-bold
+          {% if c.sentiment == 'bullish' %}text-green-600{% elif c.sentiment == 'bearish' %}text-red-600{% elif c.sentiment == 'mixed' %}text-amber-600{% else %}text-gray-500{% endif %}
+        ">{{ c.sentiment | upper }}</span>
+      </div>
+      <p class="text-sm text-gray-600 mt-1">{{ c.thesis }}</p>
+      {% if c.context_quote %}<p class="text-xs text-gray-400 mt-1 italic">"{{ c.context_quote[:120] }}"</p>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Macro Calls -->
+  {% if analysis.macro_calls %}
+  <div class="bg-white rounded-lg border p-4 shadow-sm mb-4">
+    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Macro Calls</h2>
+    {% for m in analysis.macro_calls %}
+    <div class="mb-3 {% if not loop.last %}pb-3 border-b border-gray-100{% endif %}">
+      <p class="font-semibold text-sm">{{ m.theme }}</p>
+      <p class="text-sm text-gray-600 mt-1">{{ m.position }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Content Hooks -->
+  {% if analysis.content_hooks %}
+  <div class="bg-white rounded-lg border p-4 shadow-sm mb-4">
+    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Content Hooks</h2>
+    {% for h in analysis.content_hooks %}
+    <div class="mb-3 {% if not loop.last %}pb-3 border-b border-gray-100{% endif %}">
+      <p class="font-semibold text-sm">{{ h.headline }}</p>
+      <p class="text-sm text-gray-600 mt-1">{{ h.insight }}</p>
+      {% if h.content_pillar %}<span class="pill pill-hook mt-1">{{ h.content_pillar | replace('_', ' ') }}</span>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Marketing Tactics -->
+  {% if analysis.marketing_tactics %}
+  <div class="bg-white rounded-lg border p-4 shadow-sm mb-4">
+    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Marketing Tactics</h2>
+    {% for t in analysis.marketing_tactics %}
+    <div class="mb-3 {% if not loop.last %}pb-3 border-b border-gray-100{% endif %}">
+      <p class="font-semibold text-sm">{{ t.tactic }}{% if t.platform %} <span class="text-blue-600">[{{ t.platform }}]</span>{% endif %}</p>
+      {% if t.result_cited %}<p class="text-sm text-green-700 mt-1">Result: {{ t.result_cited }}</p>{% endif %}
+      <p class="text-sm text-gray-600 mt-1">{{ t.applicable_to }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Contrarian Takes -->
+  {% if analysis.contrarian_takes %}
+  <div class="bg-white rounded-lg border p-4 shadow-sm mb-4">
+    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Contrarian Takes</h2>
+    {% for take in analysis.contrarian_takes %}
+    <div class="border-l-3 border-amber-400 pl-3 mb-3">
+      <p class="text-sm text-gray-700">{{ take }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- People Mentioned -->
+  {% if analysis.people_mentioned %}
+  <div class="bg-white rounded-lg border p-4 shadow-sm mb-4">
+    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">People Mentioned</h2>
+    {% for p in analysis.people_mentioned %}
+    <div class="flex items-start gap-2 mb-2">
+      <span class="font-semibold text-sm">{{ p.name }}</span>
+      <span class="text-sm text-gray-500">{{ p.context }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Topic Tags -->
+  {% if analysis.topic_tags %}
+  <div class="flex flex-wrap gap-1 mb-4">
+    {% for tag in analysis.topic_tags %}
+    <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">{{ tag }}</span>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% else %}
+  <div class="text-center py-8 text-gray-400">
+    <p>No analysis available for this item yet.</p>
+    <p class="text-sm mt-1">Run <code class="bg-gray-100 px-2 py-0.5 rounded">podflow analyze</code></p>
+  </div>
+  {% endif %}
+
+  <!-- Action Bar -->
+  <div class="sticky bottom-16 md:bottom-4 bg-white border rounded-full shadow-lg p-2 flex items-center justify-center gap-4 mb-4">
+    <button hx-post="/api/star/{{ item.id }}" hx-swap="outerHTML"
+            class="action-btn text-xl {% if is_starred %}text-yellow-400{% else %}text-gray-400{% endif %}">
+      {% if is_starred %}★{% else %}☆{% endif %}
+    </button>
+    <span class="flex gap-2" id="rate-detail-{{ item.id }}">
+      <button hx-post="/api/rate/{{ item.id }}" hx-vals='{"rating":"up"}' hx-target="#rate-detail-{{ item.id }}" hx-swap="outerHTML"
+              class="action-btn text-xl {% if rating == 'rate_up' %}text-green-500{% else %}text-gray-400{% endif %}">👍</button>
+      <button hx-post="/api/rate/{{ item.id }}" hx-vals='{"rating":"down"}' hx-target="#rate-detail-{{ item.id }}" hx-swap="outerHTML"
+              class="action-btn text-xl {% if rating == 'rate_down' %}text-red-500{% else %}text-gray-400{% endif %}">👎</button>
+    </span>
+    <button onclick="navigator.clipboard.writeText(document.title + ' — via Podflow')" class="action-btn text-xl text-gray-400 hover:text-blue-500" title="Copy">📋</button>
+    <button hx-post="/api/archive/{{ item.id }}" hx-swap="none" class="action-btn text-sm text-gray-400 hover:text-red-500">Archive</button>
+  </div>
+
+</div>
+{% endblock %}

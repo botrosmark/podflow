@@ -154,6 +154,28 @@ def init_db() -> None:
             CREATE INDEX IF NOT EXISTS idx_ci_type ON content_items(source_type);
             CREATE INDEX IF NOT EXISTS idx_ci_published ON content_items(published_date);
 
+            -- Dashboard tables
+            CREATE TABLE IF NOT EXISTS user_state (
+                user_id TEXT PRIMARY KEY,
+                last_visit_at TEXT,
+                active_persona TEXT DEFAULT 'mark',
+                preferences_json TEXT DEFAULT '{}'
+            );
+
+            CREATE TABLE IF NOT EXISTS user_actions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id TEXT NOT NULL,
+                content_item_id INTEGER REFERENCES content_items(id),
+                insight_type TEXT,
+                insight_key TEXT,
+                action_type TEXT NOT NULL,
+                created_at TEXT NOT NULL DEFAULT (datetime('now')),
+                UNIQUE(user_id, content_item_id, action_type)
+            );
+
+            CREATE INDEX IF NOT EXISTS idx_ua_user ON user_actions(user_id);
+            CREATE INDEX IF NOT EXISTS idx_ua_action ON user_actions(action_type);
+
             CREATE TABLE IF NOT EXISTS content_analysis (
                 content_item_id INTEGER PRIMARY KEY REFERENCES content_items(id),
                 analysis_json TEXT NOT NULL,

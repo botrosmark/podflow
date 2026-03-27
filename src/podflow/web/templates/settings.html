@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% set active_tab = "settings" %}
+
+{% block title %}Settings — Podflow{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 pt-4">
+
+  <h1 class="text-xl font-bold mb-6">Settings</h1>
+
+  <!-- Pipeline Status -->
+  <div class="bg-white rounded-lg border p-4 shadow-sm mb-4">
+    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Pipeline Status</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      {% for status, count in status_counts.items() %}
+      <div class="text-center">
+        <div class="text-2xl font-bold {% if status == 'complete' %}text-green-600{% elif status == 'error' %}text-red-600{% elif status == 'detected' %}text-yellow-600{% else %}text-blue-600{% endif %}">{{ count }}</div>
+        <div class="text-xs text-gray-500">{{ status }}</div>
+      </div>
+      {% endfor %}
+      <div class="text-center">
+        <div class="text-2xl font-bold text-purple-600">{{ total_analyses }}</div>
+        <div class="text-xs text-gray-500">analyzed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- My Signals -->
+  <div class="bg-white rounded-lg border p-4 shadow-sm mb-4">
+    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">My Signals</h2>
+    {% if action_counts %}
+    <div class="grid grid-cols-3 gap-3">
+      {% for action, count in action_counts.items() %}
+      <div class="text-center">
+        <div class="text-lg font-bold">{{ count }}</div>
+        <div class="text-xs text-gray-500">{{ action | replace('_', ' ') }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-sm text-gray-400">No actions yet. Star, rate, and archive items to build your signal profile.</p>
+    {% endif %}
+  </div>
+
+  <!-- Thought Leaders -->
+  <div class="bg-white rounded-lg border p-4 shadow-sm mb-4">
+    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Thought Leaders ({{ leaders | length }})</h2>
+    <div class="space-y-2 max-h-96 overflow-y-auto">
+      {% for tl in leaders | sort(attribute='name') %}
+      <div class="flex items-center justify-between py-1 border-b border-gray-50">
+        <div>
+          <span class="text-sm font-medium">{{ tl.name }}</span>
+          <span class="text-xs text-gray-400 ml-2">{{ tl.sources | length }} source{{ 's' if tl.sources | length != 1 }}</span>
+        </div>
+        <span class="text-xs {% if tl.enabled %}text-green-500{% else %}text-red-400{% endif %}">
+          {% if tl.enabled %}active{% else %}disabled{% endif %}
+        </span>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="text-xs text-gray-400 mt-3">Manage leaders via CLI: <code class="bg-gray-100 px-1 rounded">podflow leaders</code></p>
+  </div>
+
+  <!-- Account -->
+  <div class="bg-white rounded-lg border p-4 shadow-sm mb-4">
+    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Account</h2>
+    <p class="text-sm">Logged in as <strong>{{ user }}</strong></p>
+    <a href="/logout" class="text-sm text-red-500 hover:text-red-700 mt-2 inline-block">Log out</a>
+  </div>
+
+</div>
+{% endblock %}

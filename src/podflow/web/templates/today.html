@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% set active_tab = "today" %}
+
+{% block title %}Today — Podflow{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 pt-4">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-xl font-bold">Podflow</h1>
+    <div class="flex items-center gap-3">
+      <form hx-post="/api/persona" hx-swap="none" class="flex bg-gray-100 rounded-full p-0.5">
+        <button name="persona" value="mark" class="px-3 py-1 rounded-full text-xs font-semibold transition {% if persona == 'mark' %}bg-white shadow text-gray-900{% else %}text-gray-500{% endif %}">Mark</button>
+        <button name="persona" value="brooke" class="px-3 py-1 rounded-full text-xs font-semibold transition {% if persona == 'brooke' %}bg-white shadow text-gray-900{% else %}text-gray-500{% endif %}">Brooke</button>
+      </form>
+      <a href="/search" class="text-gray-400 hover:text-gray-600">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- Unread badge -->
+  <div class="text-sm text-gray-500 mb-4">
+    <strong class="text-gray-900">{{ total_items }}</strong> items analyzed recently
+  </div>
+
+  <!-- Top Ideas Carousel -->
+  {% if top_ideas %}
+  <div class="mb-6">
+    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Top Ideas</h2>
+    <div class="idea-carousel">
+      {% for idea in top_ideas %}
+      <div class="idea-card bg-white rounded-lg border p-3 shadow-sm">
+        <div class="flex items-start justify-between mb-1">
+          <span class="pill pill-{{ idea.category }}">{{ idea.category | replace('_', ' ') }}</span>
+          <span class="text-xs font-bold text-blue-600 bg-blue-50 rounded-full w-6 h-6 flex items-center justify-center">{{ idea.score }}</span>
+        </div>
+        <p class="text-sm font-semibold leading-tight mt-2">{{ idea.idea[:60] }}{% if idea.idea|length > 60 %}...{% endif %}</p>
+        <p class="text-xs text-gray-500 mt-1">{{ idea.detail[:50] }}{% if idea.detail|length > 50 %}...{% endif %}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Insight Cards -->
+  <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Today's Highlights</h2>
+
+  <div class="space-y-2" id="cards">
+    {% for card in cards %}
+    {% include "card.html" %}
+    {% endfor %}
+
+    {% if not cards %}
+    <div class="text-center py-12 text-gray-400">
+      <p class="text-lg">No analyzed content yet</p>
+      <p class="text-sm mt-1">Run <code class="bg-gray-100 px-2 py-0.5 rounded">podflow poll && podflow analyze</code> to get started</p>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

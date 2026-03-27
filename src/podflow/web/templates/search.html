@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Search — Podflow{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 pt-4">
+
+  <form action="/search" method="get">
+    <input type="text" name="q" value="{{ q }}" autofocus
+           placeholder="Search companies, themes, ideas..."
+           class="w-full text-lg border-0 border-b-2 border-gray-200 focus:border-blue-500 focus:ring-0 bg-transparent py-3 px-1 outline-none"
+           hx-get="/search" hx-trigger="keyup changed delay:300ms" hx-target="#results" hx-push-url="true"
+           hx-include="[name='q']">
+  </form>
+
+  <div id="results" class="mt-4 space-y-2">
+    {% if q and results %}
+    <p class="text-sm text-gray-500">{{ results | length }} result{{ 's' if results | length != 1 }}</p>
+    {% for r in results %}
+    <a href="/item/{{ r.id }}" class="block bg-white rounded-lg border p-3 shadow-sm hover:shadow-md transition">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="pill pill-{{ r.source_type }}">{{ r.source_type | replace('_', ' ') }}</span>
+        <span class="text-xs text-gray-400">{{ r.thought_leader_slug }}</span>
+      </div>
+      <p class="font-semibold text-sm">{{ r.title }}</p>
+      {% if r.one_sentence_summary %}
+      <p class="text-sm text-gray-600 mt-1">{{ r.one_sentence_summary }}</p>
+      {% endif %}
+    </a>
+    {% endfor %}
+    {% elif q %}
+    <div class="text-center py-8 text-gray-400">
+      <p>No results for "{{ q }}"</p>
+    </div>
+    {% else %}
+    <div class="text-center py-8 text-gray-400">
+      <p>Type to search across all analyzed content</p>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+<!-- Insight Card component -->
+<div class="card bg-white rounded-lg border p-4 shadow-sm" id="card-{{ card.content_item_id }}-{{ loop.index0 if loop is defined else '' }}">
+  <div class="flex items-center gap-2 mb-2">
+    <span class="pill pill-{{ card.source_type }}">{{ card.source_type | replace('_', ' ') }}</span>
+    <span class="pill pill-{{ card.insight_type }}">{{ card.insight_type }}</span>
+    <span class="text-xs text-gray-400 ml-auto">{{ card.thought_leader }}</span>
+  </div>
+
+  <a href="/item/{{ card.content_item_id }}" class="block">
+    <h3 class="font-semibold text-sm leading-snug">{{ card.headline[:100] }}{% if card.headline|length > 100 %}...{% endif %}</h3>
+    {% if card.body %}
+    <p class="text-sm text-gray-600 mt-1 line-clamp-2">{{ card.body[:150] }}{% if card.body|length > 150 %}...{% endif %}</p>
+    {% endif %}
+  </a>
+
+  <div class="flex items-center justify-between mt-3 pt-2 border-t border-gray-100">
+    <div class="text-xs text-gray-400">
+      {{ card.title[:40] }}{% if card.title|length > 40 %}...{% endif %}
+      {% if card.published_date %} · {{ card.published_date.strftime('%b %d') if card.published_date is not string else card.published_date[:10] }}{% endif %}
+    </div>
+    <div class="flex items-center gap-1">
+      {% set is_starred = card.content_item_id in starred %}
+      <button hx-post="/api/star/{{ card.content_item_id }}" hx-swap="outerHTML"
+              class="action-btn {% if is_starred %}text-yellow-400{% else %}text-gray-400 hover:text-yellow-400{% endif %}"
+              title="Star">{% if is_starred %}★{% else %}☆{% endif %}</button>
+
+      <span class="flex gap-1" id="rate-{{ card.content_item_id }}-{{ loop.index0 if loop is defined else '' }}">
+        <button hx-post="/api/rate/{{ card.content_item_id }}" hx-vals='{"rating":"up"}' hx-target="#rate-{{ card.content_item_id }}-{{ loop.index0 if loop is defined else '' }}" hx-swap="outerHTML" class="action-btn text-gray-400 hover:text-green-500" title="Useful">👍</button>
+        <button hx-post="/api/rate/{{ card.content_item_id }}" hx-vals='{"rating":"down"}' hx-target="#rate-{{ card.content_item_id }}-{{ loop.index0 if loop is defined else '' }}" hx-swap="outerHTML" class="action-btn text-gray-400 hover:text-red-500" title="Not useful">👎</button>
+      </span>
+
+      <button hx-post="/api/archive/{{ card.content_item_id }}" hx-target="#card-{{ card.content_item_id }}-{{ loop.index0 if loop is defined else '' }}" hx-swap="outerHTML"
+              class="action-btn text-gray-300 hover:text-red-400" title="Archive">✕</button>
+    </div>
+  </div>
+</div>

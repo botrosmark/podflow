@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% set active_tab = "saved" if current_filter == "starred" else "feed" %}
+
+{% block title %}{% if current_filter == "starred" %}Saved{% else %}Feed{% endif %} — Podflow{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 pt-4">
+
+  <h1 class="text-xl font-bold mb-4">{% if current_filter == "starred" %}Saved Items{% else %}Feed{% endif %}</h1>
+
+  <!-- Filter Bar -->
+  <div class="flex gap-2 overflow-x-auto pb-2 mb-4 -mx-4 px-4">
+    <a href="/feed?timerange={{ timerange }}" class="pill {% if not source_type %}bg-gray-900 text-white{% else %}bg-gray-100 text-gray-600{% endif %} whitespace-nowrap">All</a>
+    <a href="/feed?source_type=podcast&timerange={{ timerange }}" class="pill {% if source_type == 'podcast' %}bg-gray-900 text-white{% else %}bg-gray-100 text-gray-600{% endif %} whitespace-nowrap">Podcasts</a>
+    <a href="/feed?source_type=newsletter&timerange={{ timerange }}" class="pill {% if source_type == 'newsletter' %}bg-gray-900 text-white{% else %}bg-gray-100 text-gray-600{% endif %} whitespace-nowrap">Newsletters</a>
+    <a href="/feed?source_type=x_twitter&timerange={{ timerange }}" class="pill {% if source_type == 'x_twitter' %}bg-gray-900 text-white{% else %}bg-gray-100 text-gray-600{% endif %} whitespace-nowrap">X/Twitter</a>
+    <span class="border-l border-gray-200 mx-1"></span>
+    <a href="/feed?source_type={{ source_type }}&timerange=today" class="pill {% if timerange == 'today' %}bg-blue-100 text-blue-700{% else %}bg-gray-100 text-gray-600{% endif %} whitespace-nowrap">Today</a>
+    <a href="/feed?source_type={{ source_type }}&timerange=week" class="pill {% if timerange == 'week' %}bg-blue-100 text-blue-700{% else %}bg-gray-100 text-gray-600{% endif %} whitespace-nowrap">Week</a>
+    <a href="/feed?source_type={{ source_type }}&timerange=month" class="pill {% if timerange == 'month' %}bg-blue-100 text-blue-700{% else %}bg-gray-100 text-gray-600{% endif %} whitespace-nowrap">Month</a>
+    <a href="/feed?source_type={{ source_type }}&timerange=all" class="pill {% if timerange == 'all' %}bg-blue-100 text-blue-700{% else %}bg-gray-100 text-gray-600{% endif %} whitespace-nowrap">All</a>
+  </div>
+
+  <!-- Tag filters -->
+  {% if all_tags %}
+  <div class="flex gap-1 flex-wrap mb-4">
+    {% for t in all_tags[:12] %}
+    <a href="/feed?source_type={{ source_type }}&timerange={{ timerange }}&tag={{ t }}" class="text-xs px-2 py-0.5 rounded-full {% if tag == t %}bg-gray-900 text-white{% else %}bg-gray-100 text-gray-500 hover:bg-gray-200{% endif %}">{{ t }}</a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Cards -->
+  <div class="space-y-2">
+    {% for card in cards %}
+    {% include "card.html" %}
+    {% endfor %}
+
+    {% if not cards %}
+    <div class="text-center py-12 text-gray-400">
+      {% if current_filter == "starred" %}
+      <p>No saved items yet. Star items to save them here.</p>
+      {% else %}
+      <p>No content matching these filters.</p>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="text-center text-xs text-gray-400 py-4">{{ cards | length }} items</div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% set active_tab = "leaders" %}
+
+{% block title %}Thought Leaders — Podflow{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 pt-4">
+
+  <h1 class="text-xl font-bold mb-4">Thought Leaders</h1>
+  <p class="text-sm text-gray-500 mb-4">{{ leaders | length }} leaders, {{ leaders | sum(attribute='sources') | length if false else counts.values() | sum if counts else 0 }} items analyzed</p>
+
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+    {% for tl in leaders | sort(attribute='priority') %}
+    <div class="bg-white rounded-lg border p-3 shadow-sm hover:shadow-md transition">
+      <div class="flex items-start justify-between">
+        <h3 class="font-semibold text-sm">{{ tl.name }}</h3>
+        {% if not tl.enabled %}<span class="text-xs text-red-400">off</span>{% endif %}
+      </div>
+      <div class="flex flex-wrap gap-1 mt-1">
+        {% for tag in tl.tags[:3] %}
+        <span class="text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded">{{ tag }}</span>
+        {% endfor %}
+      </div>
+      <div class="flex items-center gap-2 mt-2 text-xs text-gray-400">
+        {% for src in tl.sources %}
+        <span title="{{ src.type.value }}">
+          {% if src.type.value == 'podcast' %}🎙{% elif src.type.value == 'newsletter' %}📧{% elif src.type.value == 'x_twitter' %}🐦{% else %}📺{% endif %}
+        </span>
+        {% endfor %}
+        <span class="ml-auto">{{ counts.get(tl.slug, 0) }} items</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}
