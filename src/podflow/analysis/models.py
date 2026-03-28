@@ -12,7 +12,8 @@ class CompanyMention(BaseModel):
     name: str
     ticker: Optional[str] = None
     sentiment: Literal["bullish", "bearish", "neutral", "mixed"]
-    thesis: str
+    conviction: int = 3                # 1-5: how strong is this call
+    thesis: str                        # what changed + why it matters
     speaker: Optional[str] = None
     context_quote: str
     approximate_location: str
@@ -21,6 +22,8 @@ class CompanyMention(BaseModel):
 class MacroCall(BaseModel):
     theme: str
     position: str
+    conviction: int = 3                # 1-5
+    what_changed: str = ""             # the delta — what's new about this call
     speaker: Optional[str] = None
     context_quote: str
     approximate_location: str
@@ -31,6 +34,7 @@ class ContentHook(BaseModel):
     insight: str
     angle: str
     content_pillar: str
+    conviction: int = 3
     context_quote: str
     why_it_matters: str
 
@@ -46,6 +50,7 @@ class MarketingTactic(BaseModel):
     platform: Optional[str] = None
     result_cited: Optional[str] = None
     applicable_to: str
+    conviction: int = 3
     speaker: Optional[str] = None
     context_quote: str
 

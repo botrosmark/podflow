@@ -72,9 +72,19 @@ def _require_user(request: Request) -> str:
     return user
 
 
-def _get_persona(request: Request) -> str:
-    """Get active persona from cookie."""
-    return request.cookies.get("podflow_persona", "mark")
+TOPIC_TABS = {
+    "all": {"label": "All", "types": None},
+    "investing": {"label": "Investing", "types": ["company", "macro"]},
+    "marketing": {"label": "Marketing", "types": ["tactic", "hook"]},
+    "contrarian": {"label": "Contrarian", "types": ["contrarian"]},
+    "ai": {"label": "AI", "types": None, "tags": ["ai", "ai-infra", "semiconductors"]},
+    "founder": {"label": "Founder", "types": ["hook", "contrarian"], "tags": ["founder", "mindset", "scaling"]},
+}
+
+
+def _get_topic(request: Request) -> str:
+    """Get active topic tab from cookie."""
+    return request.cookies.get("podflow_topic", "all")
 
 
 # ============================================
@@ -115,29 +125,28 @@ async def logout():
 # ============================================
 
 @app.get("/", response_class=HTMLResponse)
-async def today(request: Request):
+async def today(request: Request, topic: str = "all"):
     user = _require_user(request)
     if not user:
         return RedirectResponse("/login")
 
-    persona = _get_persona(request)
+    if topic not in TOPIC_TABS:
+        topic = "all"
     since = datetime.now(timezone.utc) - timedelta(hours=48)
 
     # Get recent analyzed content
     analyzed = get_analyzed_content_since(since)
     if not analyzed:
-        # Fall back to wider window
         analyzed = get_analyzed_content_since(datetime.now(timezone.utc) - timedelta(days=14))
 
-    # Parse analysis JSON into insight cards
-    cards = _build_insight_cards(analyzed, persona)
+    # Parse analysis JSON into insight cards, then filter by topic
+    cards = _build_insight_cards(analyzed, topic)
 
     # Get top ideas from Idea Bank
     top_ideas = []
     try:
         from podflow.idea_bank import get_top_ideas
-        sheet = "Mark" if persona == "mark" else "Brooke"
-        top_ideas = get_top_ideas(sheet, 8)
+        top_ideas = get_top_ideas("Mark", 8)
     except Exception:
         pass
 
@@ -157,7 +166,8 @@ async def today(request: Request):
 
     return templates.TemplateResponse(request, "today.html", {
         "user": user,
-        "persona": persona,
+        "topic": topic,
+        "topic_tabs": TOPIC_TABS,
         "cards": cards[:30],
         "top_ideas": top_ideas,
         "starred": starred,
@@ -172,8 +182,6 @@ async def feed(request: Request, source_type: str = "", tag: str = "",
     if not user:
         return RedirectResponse("/login")
 
-    persona = _get_persona(request)
-
     # Build time window
     if timerange == "today":
         since = datetime.now(timezone.utc) - timedelta(hours=24)
@@ -185,7 +193,7 @@ async def feed(request: Request, source_type: str = "", tag: str = "",
         since = datetime.now(timezone.utc) - timedelta(days=365)
 
     analyzed = get_analyzed_content_since(since)
-    cards = _build_insight_cards(analyzed, persona)
+    cards = _build_insight_cards(analyzed)
 
     # Apply filters
     if source_type:
@@ -220,7 +228,6 @@ async def feed(request: Request, source_type: str = "", tag: str = "",
 
     return templates.TemplateResponse(request, "feed.html", {
         "user": user,
-        "persona": persona,
         "cards": cards[:100],
         "starred": starred,
         "source_type": source_type,
@@ -238,7 +245,6 @@ async def detail(request: Request, item_id: int):
     if not user:
         return RedirectResponse("/login")
 
-    persona = _get_persona(request)
     item = get_content_item_by_id(item_id)
     if not item:
         return HTMLResponse("Not found", status_code=404)
@@ -263,7 +269,6 @@ async def detail(request: Request, item_id: int):
 
     return templates.TemplateResponse(request, "detail.html", {
         "user": user,
-        "persona": persona,
         "item": item,
         "analysis": analysis_data,
         "is_starred": is_starred,
@@ -448,10 +453,10 @@ async def archive(request: Request, item_id: int):
     return HTMLResponse("")  # Card disappears
 
 
-@app.post("/api/persona", response_class=HTMLResponse)
-async def switch_persona(request: Request, persona: str = Form(...)):
+@app.post("/api/topic", response_class=HTMLResponse)
+async def switch_topic(request: Request, topic: str = Form(...)):
     response = RedirectResponse("/", status_code=303)
-    response.set_cookie("podflow_persona", persona, max_age=365*86400, samesite="lax")
+    response.set_cookie("podflow_topic", topic, max_age=365*86400, samesite="lax")
     return response
 
 
@@ -459,79 +464,107 @@ async def switch_persona(request: Request, persona: str = Form(...)):
 # Helpers
 # ============================================
 
-def _build_insight_cards(analyzed: list[dict], persona: str) -> list[dict]:
-    """Convert analyzed content into flat insight cards for rendering."""
+def _credibility_boost(thought_leader_slug: str, insight_type: str, item_tags: list) -> float:
+    """Boost score when insight matches the thought leader's core expertise."""
+    # Load tag-to-insight-type affinity
+    affinity = {
+        "investing": ["company", "macro"],
+        "macro": ["macro", "company"],
+        "energy": ["macro", "company"],
+        "commodities": ["macro"],
+        "saas": ["company"],
+        "ai": ["company", "macro", "hook"],
+        "ai-infra": ["company", "macro"],
+        "semiconductors": ["company"],
+        "marketing": ["tactic", "hook"],
+        "paid-media": ["tactic"],
+        "brand": ["hook", "tactic"],
+        "luxury": ["hook", "tactic"],
+        "founder": ["hook", "contrarian"],
+        "mindset": ["hook", "contrarian"],
+        "scaling": ["tactic", "hook"],
+        "creator": ["hook", "tactic"],
+    }
+    boost = 0.0
+    for tag in item_tags:
+        if tag in affinity and insight_type in affinity[tag]:
+            boost += 0.5  # Half-point boost per matching tag
+    return min(boost, 1.5)  # Cap at 1.5 boost
+
+
+def _build_insight_cards(analyzed: list[dict], topic: str = "all") -> list[dict]:
+    """Convert analyzed content into flat insight cards, filtered by topic and conviction."""
     cards = []
     for item in analyzed:
         analysis = json.loads(item.get("analysis_json", "{}"))
+        item_tags = item.get("tags", [])
+        if isinstance(item_tags, str):
+            item_tags = json.loads(item_tags) if item_tags.startswith("[") else []
+        tl_slug = item.get("thought_leader_slug", "")
         base = {
             "content_item_id": item.get("id"),
-            "thought_leader": item.get("thought_leader_slug", ""),
+            "thought_leader": tl_slug,
             "source_type": item.get("source_type", "podcast"),
             "title": item.get("title", ""),
             "published_date": item.get("published_date"),
             "drive_url": item.get("drive_url", ""),
-            "tags": item.get("tags", []),
+            "tags": item_tags,
             "summary": analysis.get("one_sentence_summary", ""),
         }
 
-        # Companies
         for c in analysis.get("companies", []):
-            cards.append({
-                **base,
-                "insight_type": "company",
+            conviction = c.get("conviction", 3)
+            what_changed = c.get("what_changed", "")
+            thesis = c.get("thesis", "")
+            if what_changed and what_changed not in thesis:
+                thesis = f"{what_changed} {thesis}"
+            cards.append({**base, "insight_type": "company", "conviction": conviction,
                 "headline": f"{c.get('name', '')} ({c.get('ticker', '—')}) — {c.get('sentiment', 'neutral').upper()}",
-                "body": c.get("thesis", ""),
-                "location": c.get("approximate_location", ""),
-            })
+                "body": thesis, "location": c.get("approximate_location", "")})
 
-        # Macro calls
         for m in analysis.get("macro_calls", []):
-            cards.append({
-                **base,
-                "insight_type": "macro",
-                "headline": m.get("theme", ""),
-                "body": m.get("position", ""),
-                "location": m.get("approximate_location", ""),
-            })
+            conviction = m.get("conviction", 3)
+            position = m.get("position", "")
+            what_changed = m.get("what_changed", "")
+            body = f"{position} {what_changed}".strip() if what_changed else position
+            cards.append({**base, "insight_type": "macro", "conviction": conviction,
+                "headline": m.get("theme", ""), "body": body,
+                "location": m.get("approximate_location", "")})
 
-        # Content hooks
         for h in analysis.get("content_hooks", []):
-            cards.append({
-                **base,
-                "insight_type": "hook",
-                "headline": h.get("headline", ""),
-                "body": h.get("insight", ""),
-                "pillar": h.get("content_pillar", ""),
-            })
+            cards.append({**base, "insight_type": "hook", "conviction": h.get("conviction", 3),
+                "headline": h.get("headline", ""), "body": h.get("insight", ""),
+                "pillar": h.get("content_pillar", "")})
 
-        # Marketing tactics
         for t in analysis.get("marketing_tactics", []):
             platform = f" [{t.get('platform')}]" if t.get("platform") else ""
-            cards.append({
-                **base,
-                "insight_type": "tactic",
+            cards.append({**base, "insight_type": "tactic", "conviction": t.get("conviction", 3),
                 "headline": f"{t.get('tactic', '')}{platform}",
-                "body": t.get("applicable_to", ""),
-                "result": t.get("result_cited", ""),
-            })
+                "body": t.get("applicable_to", ""), "result": t.get("result_cited", "")})
 
-        # Contrarian takes
         for take in analysis.get("contrarian_takes", []):
-            cards.append({
-                **base,
-                "insight_type": "contrarian",
-                "headline": take[:100],
-                "body": take,
-            })
+            cards.append({**base, "insight_type": "contrarian", "conviction": 4,
+                "headline": take[:100], "body": take})
 
-    # Sort by persona preference
-    type_order = {
-        "mark": {"company": 0, "macro": 1, "contrarian": 2, "hook": 3, "tactic": 4},
-        "brooke": {"tactic": 0, "hook": 1, "company": 2, "contrarian": 3, "macro": 4},
-    }
-    order = type_order.get(persona, type_order["mark"])
-    cards.sort(key=lambda c: (order.get(c.get("insight_type", ""), 5), str(c.get("published_date", ""))))
-    cards.reverse()  # newest first within each group
+    # Apply credibility boost and compute final score
+    for card in cards:
+        base_conviction = card.get("conviction", 3)
+        boost = _credibility_boost(card["thought_leader"], card["insight_type"], card["tags"])
+        card["score"] = round(base_conviction + boost, 1)
+
+    # Filter: only conviction 3+ (already enforced in prompt, but belt-and-suspenders)
+    cards = [c for c in cards if c.get("conviction", 3) >= 3]
+
+    # Filter by topic
+    tab = TOPIC_TABS.get(topic, TOPIC_TABS["all"])
+    if tab.get("types"):
+        allowed_types = set(tab["types"])
+        cards = [c for c in cards if c["insight_type"] in allowed_types]
+    if tab.get("tags"):
+        tag_set = set(tab["tags"])
+        cards = [c for c in cards if tag_set & set(c.get("tags", []))]
+
+    # Sort: score descending, then newest first
+    cards.sort(key=lambda c: (c.get("score", 3), str(c.get("published_date", ""))), reverse=True)
 
     return cards

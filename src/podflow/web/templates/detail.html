@@ -36,12 +36,11 @@
   {% if analysis.why_it_matters_mark or analysis.why_it_matters_brooke %}
   <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg mb-4">
     <p class="text-xs font-bold text-amber-800 uppercase tracking-wider mb-1">Why it matters</p>
-    {% if persona == 'mark' and analysis.why_it_matters_mark %}
+    {% if analysis.why_it_matters_mark %}
     <p class="text-sm text-amber-900">{{ analysis.why_it_matters_mark }}</p>
-    {% elif analysis.why_it_matters_brooke %}
-    <p class="text-sm text-amber-900">{{ analysis.why_it_matters_brooke }}</p>
-    {% elif analysis.why_it_matters_mark %}
-    <p class="text-sm text-amber-900">{{ analysis.why_it_matters_mark }}</p>
+    {% endif %}
+    {% if analysis.why_it_matters_brooke %}
+    <p class="text-sm text-amber-900 {% if analysis.why_it_matters_mark %}mt-2{% endif %}">{{ analysis.why_it_matters_brooke }}</p>
     {% endif %}
   </div>
   {% endif %}

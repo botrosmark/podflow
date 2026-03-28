@@ -9,24 +9,30 @@
   <!-- Header -->
   <div class="flex items-center justify-between mb-4">
     <h1 class="text-xl font-bold">Podflow</h1>
-    <div class="flex items-center gap-3">
-      <form hx-post="/api/persona" hx-swap="none" class="flex bg-gray-100 rounded-full p-0.5">
-        <button name="persona" value="mark" class="px-3 py-1 rounded-full text-xs font-semibold transition {% if persona == 'mark' %}bg-white shadow text-gray-900{% else %}text-gray-500{% endif %}">Mark</button>
-        <button name="persona" value="brooke" class="px-3 py-1 rounded-full text-xs font-semibold transition {% if persona == 'brooke' %}bg-white shadow text-gray-900{% else %}text-gray-500{% endif %}">Brooke</button>
-      </form>
-      <a href="/search" class="text-gray-400 hover:text-gray-600">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-      </a>
-    </div>
+    <a href="/search" class="text-gray-400 hover:text-gray-600">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+    </a>
+  </div>
+
+  <!-- Topic Tabs -->
+  <div class="flex gap-1 overflow-x-auto pb-2 mb-4 -mx-4 px-4">
+    {% for key, tab in topic_tabs.items() %}
+    <a href="/?topic={{ key }}" class="px-3 py-1.5 rounded-full text-xs font-semibold transition whitespace-nowrap flex-shrink-0
+      {% if topic == key %}bg-gray-900 text-white{% else %}bg-gray-100 text-gray-600 hover:bg-gray-200{% endif %}">
+      {{ tab.label }}
+    </a>
+    {% endfor %}
   </div>
 
   <!-- Unread badge -->
   <div class="text-sm text-gray-500 mb-4">
-    <strong class="text-gray-900">{{ total_items }}</strong> items analyzed recently
+    <strong class="text-gray-900">{{ cards | length }}</strong> insights
+    {% if topic != 'all' %} in <strong>{{ topic_tabs[topic].label }}</strong>{% endif %}
+    from <strong>{{ total_items }}</strong> items analyzed
   </div>
 
   <!-- Top Ideas Carousel -->
-  {% if top_ideas %}
+  {% if top_ideas and topic == 'all' %}
   <div class="mb-6">
     <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Top Ideas</h2>
     <div class="idea-carousel">
@@ -45,8 +51,6 @@
   {% endif %}
 
   <!-- Insight Cards -->
-  <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Today's Highlights</h2>
-
   <div class="space-y-2" id="cards">
     {% for card in cards %}
     {% include "card.html" %}
@@ -54,8 +58,8 @@
 
     {% if not cards %}
     <div class="text-center py-12 text-gray-400">
-      <p class="text-lg">No analyzed content yet</p>
-      <p class="text-sm mt-1">Run <code class="bg-gray-100 px-2 py-0.5 rounded">podflow poll && podflow analyze</code> to get started</p>
+      <p class="text-lg">No insights{% if topic != 'all' %} for {{ topic_tabs[topic].label }}{% endif %}</p>
+      <p class="text-sm mt-1">Try switching to a different topic or run <code class="bg-gray-100 px-2 py-0.5 rounded">podflow analyze</code></p>
     </div>
     {% endif %}
   </div>

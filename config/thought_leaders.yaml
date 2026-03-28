@@ -1,5 +1,175 @@
 thought_leaders:
   # ============================================
+  # HIGH-PROFILE X ACCOUNTS (need rss.app feeds)
+  # Create feeds at rss.app, then fill in rss_url
+  # ============================================
+
+  - name: "Andrej Karpathy"
+    slug: karpathy
+    tags: [ai, engineering, deep-learning]
+    priority: 1
+    enabled: true
+    sources:
+      - type: x_twitter
+        handle: "@kaborofficial"
+        rss_url: ""
+        enabled: false
+
+  - name: "Elon Musk"
+    slug: elon-musk
+    tags: [ai, tech, energy, space]
+    priority: 1
+    enabled: true
+    sources:
+      - type: x_twitter
+        handle: "@elonmusk"
+        rss_url: ""
+        enabled: false
+
+  - name: "Chamath Palihapitiya"
+    slug: chamath
+    tags: [investing, tech, venture, macro]
+    priority: 1
+    enabled: true
+    sources:
+      - type: x_twitter
+        handle: "@chaaborofficial"
+        rss_url: ""
+        enabled: false
+
+  - name: "David Sacks"
+    slug: david-sacks
+    tags: [tech, venture, ai, politics]
+    priority: 1
+    enabled: true
+    sources:
+      - type: x_twitter
+        handle: "@DavidSacks"
+        rss_url: ""
+        enabled: false
+
+  - name: "Sam Altman"
+    slug: sam-altman
+    tags: [ai, tech, founder]
+    priority: 1
+    enabled: true
+    sources:
+      - type: x_twitter
+        handle: "@sama"
+        rss_url: ""
+        enabled: false
+
+  - name: "Naval Ravikant"
+    slug: naval
+    tags: [investing, founder, mindset, philosophy]
+    priority: 1
+    enabled: true
+    sources:
+      - type: x_twitter
+        handle: "@naval"
+        rss_url: ""
+        enabled: false
+
+  - name: "Paul Graham"
+    slug: paul-graham
+    tags: [founder, startups, tech, writing]
+    priority: 1
+    enabled: true
+    sources:
+      - type: x_twitter
+        handle: "@paulg"
+        rss_url: ""
+        enabled: false
+
+  - name: "Balaji Srinivasan"
+    slug: balaji
+    tags: [tech, macro, crypto, geopolitics]
+    priority: 1
+    enabled: true
+    sources:
+      - type: x_twitter
+        handle: "@balajis"
+        rss_url: ""
+        enabled: false
+
+  - name: "Marc Andreessen"
+    slug: marc-andreessen
+    tags: [tech, venture, ai, culture]
+    priority: 1
+    enabled: true
+    sources:
+      - type: x_twitter
+        handle: "@pmarca"
+        rss_url: ""
+        enabled: false
+
+  - name: "Garry Tan"
+    slug: garry-tan
+    tags: [venture, startups, yc, tech]
+    priority: 2
+    enabled: true
+    sources:
+      - type: x_twitter
+        handle: "@garrytan"
+        rss_url: ""
+        enabled: false
+
+  - name: "Shivon Zilis"
+    slug: shivon-zilis
+    tags: [ai, neuralink, tech]
+    priority: 2
+    enabled: true
+    sources:
+      - type: x_twitter
+        handle: "@shaborofficial"
+        rss_url: ""
+        enabled: false
+
+  - name: "George (10-K Diver)"
+    slug: 10k-diver
+    tags: [investing, value, mental-models]
+    priority: 2
+    enabled: true
+    sources:
+      - type: x_twitter
+        handle: "@10kdiver"
+        rss_url: ""
+        enabled: false
+
+  - name: "Litquidity"
+    slug: litquidity
+    tags: [finance, markets, humor]
+    priority: 2
+    enabled: true
+    sources:
+      - type: x_twitter
+        handle: "@litaborofficial"
+        rss_url: ""
+        enabled: false
+
+  - name: "Brad Gerstner"
+    slug: brad-gerstner
+    tags: [investing, tech, venture]
+    priority: 1
+    enabled: true
+    sources:
+      - type: x_twitter
+        handle: "@bradgerstner"
+        rss_url: ""
+        enabled: false
+
+  - name: "Bill Gurley"
+    slug: bill-gurley
+    tags: [investing, venture, marketplaces]
+    priority: 1
+    enabled: true
+    sources:
+      - type: x_twitter
+        handle: "@bgurley"
+        rss_url: ""
+        enabled: false
+
+  # ============================================
   # INVESTING & MACRO
   # ============================================
 

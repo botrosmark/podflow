@@ -1,54 +1,62 @@
 """Centralized Claude prompts for podcast analysis."""
 
-MARK_ANALYSIS_PROMPT = """You are an expert investment research analyst extracting actionable intelligence from podcast transcripts.
+# Shared instruction block injected into all analysis prompts
+_QUALITY_INSTRUCTIONS = """
+CRITICAL RULES — Read these before extracting anything:
 
-CONTEXT: Mark is building AI products, trades around macro/energy/AI infrastructure themes, and is interested in quality/value investing. Filter insights through what would be actionable or thesis-relevant for him.
+1. CONVICTION SCORING (1-5 for every extracted item):
+   1 = Offhand mention, no real thesis behind it
+   2 = Brief discussion, surface-level take
+   3 = Substantive point with some reasoning
+   4 = Detailed thesis with evidence, specific numbers, or clear logic
+   5 = Deep conviction call — the speaker spent significant time on this, cited specific data, or staked their reputation
+   ONLY INCLUDE ITEMS SCORING 3 OR HIGHER. Skip 1s and 2s entirely.
 
-Analyze this podcast transcript and extract structured intelligence. Be aggressive about signal vs. noise — skip ads, banter, pleasantries, sponsor reads.
+2. "WHAT CHANGED" FRAMING:
+   Don't just state positions. State the DELTA — what's new, what shifted, what's surprising.
+   BAD: "NVIDIA — BULLISH. Jensen is executing well."
+   GOOD: "NVIDIA — BULLISH. Datacenter revenue beat by 22% on hyperscaler capex acceleration. Fabricated Knowledge sees this as confirmation that the AI capex cycle has 2-3 more years of runway, contrary to the bear case that it peaks in 2025."
+   The thesis field must answer: What changed? Why now? Why does it matter?
 
-WRITING STYLE — Smart Brevity:
-- Lead every thesis/insight with the most important words first.
-- Max 2 sentences per thesis. One idea per sentence.
-- Use strong, short words. "Cut" not "eliminate." "Big" not "significant."
-- Be specific: "$4.2B revenue" not "strong revenue." Name the number.
-- No throat-clearing: no "Interestingly," "It's worth noting," "As you may know."
-- Write as if explaining to a smart friend — direct, confident, no hedging.
-- Every content hook headline should work as a standalone scroll-stopper.
+3. SMART BREVITY WRITING:
+   - Lead with the most important words. Max 2 sentences per thesis.
+   - Name specific numbers, dates, companies, people. No vague claims.
+   - No throat-clearing: no "Interestingly," "It's worth noting," etc.
 
-For EVERY claim, cite:
-- The speaker label (e.g., "Speaker A", "Patrick", etc.)
-- Approximate location in the episode: "early" (first third), "middle", or "late" (final third)
+4. QUALITY OVER QUANTITY:
+   Extract the 3-7 BEST insights, not every mention. If a company is name-dropped without a thesis, skip it. If a macro theme is mentioned without a specific call, skip it. Be ruthless about signal vs noise.
+"""
 
-Extract:
+MARK_ANALYSIS_PROMPT = """You are an expert investment research analyst.
+""" + _QUALITY_INSTRUCTIONS + """
+CONTEXT: This will be read by someone building AI products and trading around macro/energy/AI infrastructure themes with a quality/value investing lens.
 
-1. **Company Mentions**: Companies with investment relevance. Include ticker if public. Assess sentiment (bullish/bearish/neutral/mixed). Thesis: 1-2 punchy sentences — what's the call and why.
+For EVERY item, cite the speaker and approximate location (early/middle/late).
 
-2. **Macro Calls**: Macro themes, rate views, sector rotations. State the specific call in one sentence.
+Extract the BEST 3-7 insights (conviction 3+ only):
 
-3. **Content Hooks**: Scroll-stopping content ideas. Headline must work standalone. One-sentence insight. Assign content_pillar: luxury_brand | ai_business | founder_mindset | marketing_innovation | creator_economy.
+1. **Companies**: Ticker if public. Sentiment. Conviction (1-5). Thesis must explain WHAT CHANGED and WHY IT MATTERS — not just "they're doing well."
+2. **Macro Calls**: The specific call + what_changed. What's the delta vs consensus?
+3. **Content Hooks**: Scroll-stopping headlines. Assign content_pillar: luxury_brand | ai_business | founder_mindset | marketing_innovation | creator_economy.
+4. **Contrarian Takes**: Where speakers disagree with consensus. Highest signal — be selective.
+5. **People Mentioned**: Only if they're relevant to an investment thesis.
+6. **why_it_matters_mark**: One sentence. Be specific.
+7. **why_it_matters_brooke**: One sentence if relevant, null if not.
 
-4. **People Mentioned**: Notable people (fund managers, founders, execs) and context.
-
-5. **Contrarian Takes**: Where speakers disagree with consensus or each other. Most valuable signal.
-
-6. **why_it_matters_mark**: One punchy sentence — why Mark should care given his focus on AI products, macro/energy, and quality/value investing.
-
-7. **why_it_matters_brooke**: One sentence — why Brooke (luxury marketing agency) might care for content or client work.
-
-Return ONLY valid JSON matching this exact schema:
+Return ONLY valid JSON:
 {{
-  "episode_id": "<provided>",
-  "podcast_name": "<provided>",
-  "episode_title": "<provided>",
-  "audience": "<provided>",
-  "one_sentence_summary": "string",
+  "episode_id": "{episode_id}",
+  "podcast_name": "{podcast_name}",
+  "episode_title": "{episode_title}",
+  "audience": "{audience}",
+  "one_sentence_summary": "string — the single most important takeaway",
   "topic_tags": ["string"],
-  "companies": [{{"name": "string", "ticker": "string|null", "sentiment": "bullish|bearish|neutral|mixed", "thesis": "string", "speaker": "string|null", "context_quote": "string", "approximate_location": "early|middle|late"}}],
-  "macro_calls": [{{"theme": "string", "position": "string", "speaker": "string|null", "context_quote": "string", "approximate_location": "early|middle|late"}}],
-  "content_hooks": [{{"headline": "string", "insight": "string", "angle": "string", "content_pillar": "string", "context_quote": "string", "why_it_matters": "string"}}],
+  "companies": [{{"name": "string", "ticker": "string|null", "sentiment": "bullish|bearish|neutral|mixed", "conviction": 3, "thesis": "WHAT CHANGED + WHY IT MATTERS in 1-2 sentences", "speaker": "string|null", "context_quote": "string", "approximate_location": "early|middle|late"}}],
+  "macro_calls": [{{"theme": "string", "position": "string", "conviction": 3, "what_changed": "the delta vs consensus", "speaker": "string|null", "context_quote": "string", "approximate_location": "early|middle|late"}}],
+  "content_hooks": [{{"headline": "string", "insight": "string", "angle": "string", "content_pillar": "string", "conviction": 3, "context_quote": "string", "why_it_matters": "string"}}],
   "marketing_tactics": [],
   "people_mentioned": [{{"name": "string", "context": "string", "sentiment": "string"}}],
-  "contrarian_takes": ["string"],
+  "contrarian_takes": ["string — must be a specific disagreement with a named consensus view"],
   "why_it_matters_mark": "string",
   "why_it_matters_brooke": "string|null"
 }}
@@ -62,53 +70,32 @@ TRANSCRIPT:
 {transcript}"""
 
 
-BROOKE_ANALYSIS_PROMPT = """You are an expert marketing and brand strategy analyst extracting actionable intelligence from podcast transcripts.
+BROOKE_ANALYSIS_PROMPT = """You are an expert marketing and brand strategy analyst.
+""" + _QUALITY_INSTRUCTIONS + """
+CONTEXT: This will be read by someone running a luxury marketing agency (ATELIER), creating Instagram content about AI for business, luxury brand strategy, and founder mindset.
 
-CONTEXT: Brooke runs a luxury marketing agency called ATELIER. Her clients are luxury and premium brand founders. She creates Instagram content (carousels, reels) about AI for business, luxury brand strategy, and founder mindset. Extract insights she can use in client strategy AND in her own content.
+Extract the BEST 3-7 insights (conviction 3+ only):
 
-Analyze this podcast transcript and extract structured intelligence. Be aggressive about signal vs. noise — skip ads, banter, pleasantries, sponsor reads.
+1. **Marketing Tactics**: Platform, specific numbers/results, and how a luxury brand agency applies this. Conviction score. Only include tactics with REAL specifics — not generic advice.
+2. **Content Hooks**: Instagram-ready. Headline must stop the scroll. Conviction score.
+3. **Companies/Brands**: What's working for them? WHAT CHANGED in their strategy?
+4. **Contrarian Takes**: Where speakers challenge marketing wisdom. Must be specific.
+5. **People Mentioned**: Notable founders, marketers, creators.
+6. **why_it_matters_brooke**: One sentence.
+7. **why_it_matters_mark**: One sentence if relevant.
 
-WRITING STYLE — Smart Brevity:
-- Lead every tactic/insight with the most important words first.
-- Max 2 sentences per point. One idea per sentence.
-- Use strong, short words. "Cut" not "eliminate." "Big" not "significant."
-- Be specific: "3.2x ROAS on Meta" not "strong results." Name the number.
-- No throat-clearing: no "Interestingly," "It's worth noting," "As you may know."
-- Write as if explaining to a smart friend — direct, confident, no hedging.
-- Every content hook headline should work as a standalone Instagram scroll-stopper.
-
-For EVERY claim, cite:
-- The speaker label (e.g., "Speaker A", "Alex", etc.)
-- Approximate location in the episode: "early" (first third), "middle", or "late" (final third)
-
-Extract:
-
-1. **Marketing Tactics**: The most important section. Specific tactics with platform (Meta, TikTok, YouTube, email), numbers cited, and one sentence on how a luxury brand agency uses this.
-
-2. **Content Hooks**: Instagram-ready ideas. Headline must stop the scroll. One-sentence insight. Assign content_pillar: luxury_brand | ai_business | founder_mindset | marketing_innovation | creator_economy.
-
-3. **Company Mentions**: Brands discussed — especially luxury, DTC, premium. What's working for them in 1-2 sentences.
-
-4. **People Mentioned**: Notable founders, marketers, creators and context.
-
-5. **Contrarian Takes**: Where speakers challenge marketing wisdom. Great content fodder.
-
-6. **why_it_matters_brooke**: One punchy sentence — why Brooke should care for agency work or Instagram content.
-
-7. **why_it_matters_mark**: One sentence — why Mark (AI builder, macro investor) might care.
-
-Return ONLY valid JSON matching this exact schema:
+Return ONLY valid JSON:
 {{
-  "episode_id": "<provided>",
-  "podcast_name": "<provided>",
-  "episode_title": "<provided>",
-  "audience": "<provided>",
+  "episode_id": "{episode_id}",
+  "podcast_name": "{podcast_name}",
+  "episode_title": "{episode_title}",
+  "audience": "{audience}",
   "one_sentence_summary": "string",
   "topic_tags": ["string"],
-  "companies": [{{"name": "string", "ticker": "string|null", "sentiment": "bullish|bearish|neutral|mixed", "thesis": "string", "speaker": "string|null", "context_quote": "string", "approximate_location": "early|middle|late"}}],
-  "macro_calls": [{{"theme": "string", "position": "string", "speaker": "string|null", "context_quote": "string", "approximate_location": "early|middle|late"}}],
-  "content_hooks": [{{"headline": "string", "insight": "string", "angle": "string", "content_pillar": "string", "context_quote": "string", "why_it_matters": "string"}}],
-  "marketing_tactics": [{{"tactic": "string", "platform": "string|null", "result_cited": "string|null", "applicable_to": "string", "speaker": "string|null", "context_quote": "string"}}],
+  "companies": [{{"name": "string", "ticker": "string|null", "sentiment": "bullish|bearish|neutral|mixed", "conviction": 3, "thesis": "string", "speaker": "string|null", "context_quote": "string", "approximate_location": "early|middle|late"}}],
+  "macro_calls": [{{"theme": "string", "position": "string", "conviction": 3, "what_changed": "string", "speaker": "string|null", "context_quote": "string", "approximate_location": "early|middle|late"}}],
+  "content_hooks": [{{"headline": "string", "insight": "string", "angle": "string", "content_pillar": "string", "conviction": 3, "context_quote": "string", "why_it_matters": "string"}}],
+  "marketing_tactics": [{{"tactic": "string", "platform": "string|null", "result_cited": "string|null", "applicable_to": "string", "conviction": 3, "speaker": "string|null", "context_quote": "string"}}],
   "people_mentioned": [{{"name": "string", "context": "string", "sentiment": "string"}}],
   "contrarian_takes": ["string"],
   "why_it_matters_mark": "string|null",
@@ -124,43 +111,33 @@ TRANSCRIPT:
 {transcript}"""
 
 
-COMBINED_ANALYSIS_PROMPT = """You are an expert analyst extracting intelligence from podcast transcripts for TWO audiences simultaneously.
+COMBINED_ANALYSIS_PROMPT = """You are an expert analyst extracting intelligence for two audiences simultaneously.
 
-AUDIENCE 1 — MARK: Building AI products, trades macro/energy/AI infrastructure themes, quality/value investing.
-AUDIENCE 2 — BROOKE: Runs ATELIER, a luxury marketing agency. Creates Instagram content about AI for business, luxury brand strategy, and founder mindset. Clients are premium brand founders.
+AUDIENCE 1 — Investor/builder focused on AI products, macro/energy/AI infrastructure, quality/value investing.
+AUDIENCE 2 — Luxury marketing agency owner focused on brand strategy, paid media, AI for business, founder mindset.
+""" + _QUALITY_INSTRUCTIONS + """
+Extract the BEST 3-7 insights total (conviction 3+ only). Quality over quantity.
 
-Analyze this transcript for BOTH audiences in a single pass. Be aggressive about signal vs. noise — skip ads, banter, pleasantries, sponsor reads.
-
-WRITING STYLE — Smart Brevity:
-- Lead with the most important words. Max 2 sentences per point.
-- Be specific: name numbers, platforms, tickers. No hedging.
-- Every headline should work as a standalone scroll-stopper.
-
-For EVERY claim, cite speaker and approximate location (early/middle/late).
-
-Extract ALL of these:
-
-1. **Company Mentions**: Ticker if public. Sentiment. 1-2 sentence thesis.
-2. **Macro Calls**: Specific call in one sentence.
-3. **Content Hooks**: Scroll-stopping headlines + one-sentence insight. Assign content_pillar: luxury_brand | ai_business | founder_mindset | marketing_innovation | creator_economy. Include hooks for BOTH audiences.
-4. **Marketing Tactics**: Platform, numbers, and how a luxury agency applies this.
-5. **People Mentioned**: Notable people and context.
-6. **Contrarian Takes**: Where speakers disagree with consensus.
-7. **why_it_matters_mark**: One punchy sentence.
-8. **why_it_matters_brooke**: One punchy sentence.
+1. **Companies**: Ticker. Sentiment. Conviction (1-5). Thesis = WHAT CHANGED + WHY IT MATTERS.
+2. **Macro Calls**: Specific call + what_changed (delta vs consensus).
+3. **Content Hooks**: Scroll-stopping. Conviction score. Assign content_pillar.
+4. **Marketing Tactics**: Only if specific numbers/results cited. Conviction score.
+5. **Contrarian Takes**: Specific disagreement with named consensus. Be selective.
+6. **People**: Only if relevant to a thesis.
+7. **why_it_matters_mark** + **why_it_matters_brooke**: One sentence each.
 
 Return ONLY valid JSON:
 {{
-  "episode_id": "<provided>",
-  "podcast_name": "<provided>",
-  "episode_title": "<provided>",
-  "audience": "<provided>",
-  "one_sentence_summary": "string",
+  "episode_id": "{episode_id}",
+  "podcast_name": "{podcast_name}",
+  "episode_title": "{episode_title}",
+  "audience": "{audience}",
+  "one_sentence_summary": "string — the single most important takeaway",
   "topic_tags": ["string"],
-  "companies": [{{"name": "string", "ticker": "string|null", "sentiment": "bullish|bearish|neutral|mixed", "thesis": "string", "speaker": "string|null", "context_quote": "string", "approximate_location": "early|middle|late"}}],
-  "macro_calls": [{{"theme": "string", "position": "string", "speaker": "string|null", "context_quote": "string", "approximate_location": "early|middle|late"}}],
-  "content_hooks": [{{"headline": "string", "insight": "string", "angle": "string", "content_pillar": "string", "context_quote": "string", "why_it_matters": "string"}}],
-  "marketing_tactics": [{{"tactic": "string", "platform": "string|null", "result_cited": "string|null", "applicable_to": "string", "speaker": "string|null", "context_quote": "string"}}],
+  "companies": [{{"name": "string", "ticker": "string|null", "sentiment": "bullish|bearish|neutral|mixed", "conviction": 3, "thesis": "WHAT CHANGED + WHY IT MATTERS", "speaker": "string|null", "context_quote": "string", "approximate_location": "early|middle|late"}}],
+  "macro_calls": [{{"theme": "string", "position": "string", "conviction": 3, "what_changed": "delta vs consensus", "speaker": "string|null", "context_quote": "string", "approximate_location": "early|middle|late"}}],
+  "content_hooks": [{{"headline": "string", "insight": "string", "angle": "string", "content_pillar": "string", "conviction": 3, "context_quote": "string", "why_it_matters": "string"}}],
+  "marketing_tactics": [{{"tactic": "string", "platform": "string|null", "result_cited": "string|null", "applicable_to": "string", "conviction": 3, "speaker": "string|null", "context_quote": "string"}}],
   "people_mentioned": [{{"name": "string", "context": "string", "sentiment": "string"}}],
   "contrarian_takes": ["string"],
   "why_it_matters_mark": "string",
@@ -176,21 +153,91 @@ TRANSCRIPT:
 {transcript}"""
 
 
-WEEKLY_MARK_PROMPT = """You are synthesizing a week's worth of podcast analysis into a weekly intelligence digest for Mark.
+NEWSLETTER_ANALYSIS_PROMPT = """You are an expert analyst extracting intelligence from a newsletter by an original thinker.
 
-CONTEXT: Mark is building AI products, trades around macro/energy/AI infrastructure themes, and is interested in quality/value investing.
+The author has a specific worldview and expertise. Extract their POSITIONS and FRAMEWORKS — not summaries.
+""" + _QUALITY_INSTRUCTIONS + """
+Extract the BEST 3-5 insights (conviction 3+ only):
 
-Given the following episode analyses from this week, produce a synthesis:
+1. **Companies**: Thesis = WHAT CHANGED. Only if the author makes a specific call.
+2. **Macro Calls**: The author's specific position + what_changed.
+3. **Content Hooks**: Reframe the author's best ideas as scroll-stopping headlines.
+4. **Contrarian Takes**: Where the author disagrees with consensus. This is often the whole point of the newsletter.
+5. **why_it_matters**: One sentence.
 
-1. **Theme Convergence**: What topics appeared across 3+ different shows independently? This cross-show convergence is the alpha signal. List each converging theme, the shows that covered it, and the synthesized view.
+Return ONLY valid JSON:
+{{
+  "episode_id": "{episode_id}",
+  "podcast_name": "{podcast_name}",
+  "episode_title": "{episode_title}",
+  "audience": "both",
+  "one_sentence_summary": "string — the author's core argument",
+  "topic_tags": ["string"],
+  "companies": [{{"name": "string", "ticker": "string|null", "sentiment": "bullish|bearish|neutral|mixed", "conviction": 3, "thesis": "string", "speaker": "string|null", "context_quote": "string", "approximate_location": "early|middle|late"}}],
+  "macro_calls": [{{"theme": "string", "position": "string", "conviction": 3, "what_changed": "string", "speaker": "string|null", "context_quote": "string", "approximate_location": "early|middle|late"}}],
+  "content_hooks": [{{"headline": "string", "insight": "string", "angle": "string", "content_pillar": "string", "conviction": 3, "context_quote": "string", "why_it_matters": "string"}}],
+  "marketing_tactics": [],
+  "people_mentioned": [{{"name": "string", "context": "string", "sentiment": "string"}}],
+  "contrarian_takes": ["string — specific disagreement with named consensus view"],
+  "why_it_matters_mark": "string|null",
+  "why_it_matters_brooke": "string|null"
+}}
 
-2. **Company Heat Map**: Which tickers/companies were mentioned most frequently across shows? Aggregate sentiment. Format as a ranked list with mention count and net sentiment.
+NEWSLETTER: {podcast_name}
+ARTICLE: {episode_title}
+ITEM ID: {episode_id}
 
-3. **Consensus vs. Contrarian Map**: Where does the majority view sit on key topics? Note any notable dissents. This is about mapping the intellectual landscape.
+ARTICLE TEXT:
+{transcript}"""
 
-4. **Biggest Macro Call of the Week**: The single most consequential macroeconomic call made across all episodes this week. Who made it, and what are the implications?
 
-5. **One Thing**: The single most important insight from the entire week that Mark should remember. Be specific and actionable.
+X_THREAD_ANALYSIS_PROMPT = """You are an expert analyst extracting intelligence from X/Twitter posts.
+
+These are short-form. The post itself IS often the insight. Focus on:
+- Original frameworks or mental models
+- Specific contrarian calls (disagreeing with consensus)
+- Data points or numbers that change understanding
+- Quick investment theses
+
+SKIP posts that are just commentary, retweets of news, or generic motivation.
+""" + _QUALITY_INSTRUCTIONS + """
+Extract ONLY conviction 4-5 insights (higher bar for short-form content):
+
+Return ONLY valid JSON:
+{{
+  "episode_id": "{episode_id}",
+  "podcast_name": "{podcast_name}",
+  "episode_title": "{episode_title}",
+  "audience": "both",
+  "one_sentence_summary": "string",
+  "topic_tags": ["string"],
+  "companies": [{{"name": "string", "ticker": "string|null", "sentiment": "bullish|bearish|neutral|mixed", "conviction": 4, "thesis": "string", "speaker": "string|null", "context_quote": "string", "approximate_location": "early|middle|late"}}],
+  "macro_calls": [{{"theme": "string", "position": "string", "conviction": 4, "what_changed": "string", "speaker": "string|null", "context_quote": "string", "approximate_location": "early|middle|late"}}],
+  "content_hooks": [{{"headline": "string", "insight": "string", "angle": "string", "content_pillar": "string", "conviction": 4, "context_quote": "string", "why_it_matters": "string"}}],
+  "marketing_tactics": [],
+  "people_mentioned": [],
+  "contrarian_takes": ["string"],
+  "why_it_matters_mark": "string|null",
+  "why_it_matters_brooke": "string|null"
+}}
+
+AUTHOR: {podcast_name}
+POST: {episode_title}
+ITEM ID: {episode_id}
+
+TEXT:
+{transcript}"""
+
+
+WEEKLY_MARK_PROMPT = """You are synthesizing a week's worth of analysis into a weekly intelligence digest.
+""" + _QUALITY_INSTRUCTIONS + """
+Given these episode analyses, produce a synthesis. Focus on CROSS-SOURCE CONVERGENCE — when multiple independent sources say the same thing, that's the signal.
+
+1. **Theme Convergence**: Topics from 3+ different sources independently. This is the alpha.
+2. **Company Heat Map**: Most-mentioned tickers with aggregated sentiment and the STRONGEST thesis.
+3. **Consensus vs. Contrarian**: Where majority view sits vs. notable dissents. Name sources.
+4. **Biggest Macro Call**: Single most consequential call. Who made it, what changed, implications.
+5. **One Thing**: Single most important insight. Be specific and actionable.
 
 Return ONLY valid JSON:
 {{
@@ -205,21 +252,15 @@ EPISODE ANALYSES:
 {analyses_json}"""
 
 
-WEEKLY_BROOKE_PROMPT = """You are synthesizing a week's worth of podcast analysis into a weekly content and strategy digest for Brooke.
+WEEKLY_BROOKE_PROMPT = """You are synthesizing a week's worth of analysis into a content and strategy digest.
+""" + _QUALITY_INSTRUCTIONS + """
+Focus on ACTIONABLE content ideas that come from CROSS-SOURCE patterns.
 
-CONTEXT: Brooke runs a luxury marketing agency called ATELIER. She creates Instagram content about AI for business, luxury brand strategy, and founder mindset.
-
-Given the following episode analyses from this week, produce a synthesis:
-
-1. **Content Themes of the Week**: What's trending across marketing and business podcasts? What topics keep coming up? These suggest what audiences are hungry for right now.
-
-2. **Top 3 Carousel Series Ideas**: Multi-post Instagram series (not one-offs). Each should have a series title, 3-5 post titles within the series, and the source episodes that inspired it.
-
-3. **Best Founder Story of the Week**: The most compelling founder narrative for storytelling content. Include the key moments and why it resonates.
-
-4. **AI Tool or Tactic of the Week**: The single most interesting AI application for business or marketing discussed this week. How could Brooke or her clients use it?
-
-5. **One Thing**: The single most actionable marketing insight from the entire week.
+1. **Content Themes**: What's trending across multiple sources? These suggest audience hunger.
+2. **Top 3 Carousel Series**: Multi-post Instagram series. Each needs a series title + 3-5 post titles.
+3. **Best Founder Story**: Most compelling narrative. Key moments + why it resonates.
+4. **AI Tool of the Week**: Most interesting AI application for business.
+5. **One Thing**: Single most actionable marketing insight.
 
 Return ONLY valid JSON:
 {{
@@ -232,89 +273,3 @@ Return ONLY valid JSON:
 
 EPISODE ANALYSES:
 {analyses_json}"""
-
-
-NEWSLETTER_ANALYSIS_PROMPT = """You are an expert analyst extracting actionable intelligence from a newsletter article.
-
-The author is an original thinker — extract their specific positions, frameworks, and calls. This is already edited and concise, so go deep on the substance.
-
-WRITING STYLE — Smart Brevity:
-- Lead with the most important words. Max 2 sentences per point.
-- Be specific: name numbers, tickers, platforms. No hedging.
-- Every content hook headline should work as a standalone scroll-stopper.
-
-Extract ALL of these:
-
-1. **Company Mentions**: Ticker if public. Sentiment. 1-2 sentence thesis.
-2. **Macro Calls**: Specific macro/market call in one sentence.
-3. **Content Hooks**: Scroll-stopping ideas. Headline + one-sentence insight. Assign content_pillar: luxury_brand | ai_business | founder_mindset | marketing_innovation | creator_economy.
-4. **Marketing Tactics**: Platform, numbers, and application. (Only if relevant.)
-5. **People Mentioned**: Notable people and context.
-6. **Contrarian Takes**: Where the author disagrees with consensus. Highest signal.
-7. **why_it_matters**: One punchy sentence.
-
-Return ONLY valid JSON:
-{{
-  "episode_id": "{episode_id}",
-  "podcast_name": "{podcast_name}",
-  "episode_title": "{episode_title}",
-  "audience": "both",
-  "one_sentence_summary": "string",
-  "topic_tags": ["string"],
-  "companies": [{{"name": "string", "ticker": "string|null", "sentiment": "bullish|bearish|neutral|mixed", "thesis": "string", "speaker": "string|null", "context_quote": "string", "approximate_location": "early|middle|late"}}],
-  "macro_calls": [{{"theme": "string", "position": "string", "speaker": "string|null", "context_quote": "string", "approximate_location": "early|middle|late"}}],
-  "content_hooks": [{{"headline": "string", "insight": "string", "angle": "string", "content_pillar": "string", "context_quote": "string", "why_it_matters": "string"}}],
-  "marketing_tactics": [{{"tactic": "string", "platform": "string|null", "result_cited": "string|null", "applicable_to": "string", "speaker": "string|null", "context_quote": "string"}}],
-  "people_mentioned": [{{"name": "string", "context": "string", "sentiment": "string"}}],
-  "contrarian_takes": ["string"],
-  "why_it_matters_mark": "string|null",
-  "why_it_matters_brooke": "string|null"
-}}
-
-NEWSLETTER: {podcast_name}
-ARTICLE: {episode_title}
-ITEM ID: {episode_id}
-
-ARTICLE TEXT:
-{transcript}"""
-
-
-X_THREAD_ANALYSIS_PROMPT = """You are an expert analyst extracting intelligence from X/Twitter posts and threads.
-
-These are short-form — prioritize contrarian takes, original frameworks, quick theses, and content hooks. Most tweets won't have company mentions or macro calls, and that's fine. Focus on what IS there.
-
-WRITING STYLE — Smart Brevity. Be direct. One idea per point.
-
-Extract what's present (skip empty sections):
-
-1. **Companies**: Only if specifically discussed with a thesis.
-2. **Macro Calls**: Only if a specific market/economic call is made.
-3. **Content Hooks**: The tweet itself may BE the hook. Reframe as a headline.
-4. **Contrarian Takes**: Where the author pushes back on consensus. Highest priority.
-5. **People Mentioned**: If they tag or reference notable people.
-6. **why_it_matters**: One sentence.
-
-Return ONLY valid JSON:
-{{
-  "episode_id": "{episode_id}",
-  "podcast_name": "{podcast_name}",
-  "episode_title": "{episode_title}",
-  "audience": "both",
-  "one_sentence_summary": "string",
-  "topic_tags": ["string"],
-  "companies": [],
-  "macro_calls": [],
-  "content_hooks": [{{"headline": "string", "insight": "string", "angle": "string", "content_pillar": "string", "context_quote": "string", "why_it_matters": "string"}}],
-  "marketing_tactics": [],
-  "people_mentioned": [],
-  "contrarian_takes": ["string"],
-  "why_it_matters_mark": "string|null",
-  "why_it_matters_brooke": "string|null"
-}}
-
-AUTHOR: {podcast_name}
-POST: {episode_title}
-ITEM ID: {episode_id}
-
-TEXT:
-{transcript}"""
