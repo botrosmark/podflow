@@ -1,859 +1,1482 @@
 thought_leaders:
-  # ============================================
-  # HIGH-PROFILE X ACCOUNTS (need rss.app feeds)
-  # Create feeds at rss.app, then fill in rss_url
-  # ============================================
-
-  - name: "Andrej Karpathy"
-    slug: karpathy
-    tags: [ai, engineering, deep-learning]
-    priority: 1
-    enabled: true
-    sources:
-      - type: x_twitter
-        handle: "@kaborofficial"
-        rss_url: ""
-        enabled: false
-
-  - name: "Elon Musk"
-    slug: elon-musk
-    tags: [ai, tech, energy, space]
-    priority: 1
-    enabled: true
-    sources:
-      - type: x_twitter
-        handle: "@elonmusk"
-        rss_url: ""
-        enabled: false
-
-  - name: "Chamath Palihapitiya"
-    slug: chamath
-    tags: [investing, tech, venture, macro]
-    priority: 1
-    enabled: true
-    sources:
-      - type: x_twitter
-        handle: "@chaaborofficial"
-        rss_url: ""
-        enabled: false
-
-  - name: "David Sacks"
-    slug: david-sacks
-    tags: [tech, venture, ai, politics]
-    priority: 1
-    enabled: true
-    sources:
-      - type: x_twitter
-        handle: "@DavidSacks"
-        rss_url: ""
-        enabled: false
-
-  - name: "Sam Altman"
-    slug: sam-altman
-    tags: [ai, tech, founder]
-    priority: 1
-    enabled: true
-    sources:
-      - type: x_twitter
-        handle: "@sama"
-        rss_url: ""
-        enabled: false
-
-  - name: "Naval Ravikant"
-    slug: naval
-    tags: [investing, founder, mindset, philosophy]
-    priority: 1
-    enabled: true
-    sources:
-      - type: x_twitter
-        handle: "@naval"
-        rss_url: ""
-        enabled: false
-
-  - name: "Paul Graham"
-    slug: paul-graham
-    tags: [founder, startups, tech, writing]
-    priority: 1
-    enabled: true
-    sources:
-      - type: x_twitter
-        handle: "@paulg"
-        rss_url: ""
-        enabled: false
-
-  - name: "Balaji Srinivasan"
-    slug: balaji
-    tags: [tech, macro, crypto, geopolitics]
-    priority: 1
-    enabled: true
-    sources:
-      - type: x_twitter
-        handle: "@balajis"
-        rss_url: ""
-        enabled: false
-
-  - name: "Marc Andreessen"
-    slug: marc-andreessen
-    tags: [tech, venture, ai, culture]
-    priority: 1
-    enabled: true
-    sources:
-      - type: x_twitter
-        handle: "@pmarca"
-        rss_url: ""
-        enabled: false
-
-  - name: "Garry Tan"
-    slug: garry-tan
-    tags: [venture, startups, yc, tech]
-    priority: 2
-    enabled: true
-    sources:
-      - type: x_twitter
-        handle: "@garrytan"
-        rss_url: ""
-        enabled: false
-
-  - name: "Shivon Zilis"
-    slug: shivon-zilis
-    tags: [ai, neuralink, tech]
-    priority: 2
-    enabled: true
-    sources:
-      - type: x_twitter
-        handle: "@shaborofficial"
-        rss_url: ""
-        enabled: false
-
-  - name: "George (10-K Diver)"
-    slug: 10k-diver
-    tags: [investing, value, mental-models]
-    priority: 2
-    enabled: true
-    sources:
-      - type: x_twitter
-        handle: "@10kdiver"
-        rss_url: ""
-        enabled: false
-
-  - name: "Litquidity"
-    slug: litquidity
-    tags: [finance, markets, humor]
-    priority: 2
-    enabled: true
-    sources:
-      - type: x_twitter
-        handle: "@litaborofficial"
-        rss_url: ""
-        enabled: false
-
-  - name: "Brad Gerstner"
-    slug: brad-gerstner
-    tags: [investing, tech, venture]
-    priority: 1
-    enabled: true
-    sources:
-      - type: x_twitter
-        handle: "@bradgerstner"
-        rss_url: ""
-        enabled: false
-
-  - name: "Bill Gurley"
-    slug: bill-gurley
-    tags: [investing, venture, marketplaces]
-    priority: 1
-    enabled: true
-    sources:
-      - type: x_twitter
-        handle: "@bgurley"
-        rss_url: ""
-        enabled: false
-
-  # ============================================
-  # INVESTING & MACRO
-  # ============================================
-
-  - name: "Patrick O'Shaughnessy"
-    slug: patrick-oshaughnessy
-    tags: [investing, tech, venture]
-    priority: 1
-    enabled: true
-    sources:
-      - type: podcast
-        name: "Invest Like the Best"
-        rss_url: "https://feeds.megaphone.fm/investlikethebest"
-        hosts: ["Patrick O'Shaughnessy"]
-        category: investing
-
-  - name: "Odd Lots"
-    slug: odd-lots
-    tags: [macro, investing, markets]
-    priority: 2
-    enabled: true
-    sources:
-      - type: podcast
-        name: "Odd Lots"
-        rss_url: "https://omnycontent.com/d/playlist/e73c998e-6e60-432f-8610-ae210140c5b1/8A94442E-5A74-4FA2-8B8D-AE27003A8D6B/982F5071-765C-403D-969D-AE27003A8D83/podcast.rss"
-        hosts: ["Tracy Alloway", "Joe Weisenthal"]
-        category: investing
-
-  - name: "Ted Seides"
-    slug: ted-seides
-    tags: [investing, allocators]
-    priority: 2
-    enabled: true
-    sources:
-      - type: podcast
-        name: "Capital Allocators"
-        rss_url: "https://tedseides.libsyn.com/rss"
-        hosts: ["Ted Seides"]
-        category: investing
-
-  - name: "We Study Billionaires"
-    slug: we-study-billionaires
-    tags: [investing, value]
-    priority: 2
-    enabled: true
-    sources:
-      - type: podcast
-        name: "We Study Billionaires"
-        rss_url: "https://feeds.megaphone.fm/PPLLC8974708240"
-        hosts: ["Stig Brodersen", "Clay Finck"]
-        category: investing
-
-  - name: "Macro Voices"
-    slug: macro-voices
-    tags: [macro, energy, commodities]
-    priority: 1
-    enabled: true
-    sources:
-      - type: podcast
-        name: "Macro Voices"
-        rss_url: "https://macrovoices.podbean.com/feed.xml"
-        hosts: ["Erik Townsend", "Patrick Ceresna"]
-        category: investing
-
-  - name: "Animal Spirits"
-    slug: animal-spirits
-    tags: [investing, markets, macro]
-    priority: 3
-    enabled: true
-    sources:
-      - type: podcast
-        name: "Animal Spirits"
-        rss_url: "https://animalspiritspod.libsyn.com/rss"
-        hosts: ["Michael Batnick", "Ben Carlson"]
-        category: investing
-
-  - name: "Tobias Carlisle"
-    slug: tobias-carlisle
-    tags: [investing, value, deep-value]
-    priority: 3
-    enabled: true
-    sources:
-      - type: podcast
-        name: "The Acquirers Podcast"
-        rss_url: "https://anchor.fm/s/9603714/podcast/rss"
-        hosts: ["Tobias Carlisle"]
-        category: investing
-
-  - name: "Doomberg"
-    slug: doomberg
-    tags: [energy, macro, commodities, ai-infra]
-    priority: 1
-    enabled: true
-    sources:
-      - type: newsletter
-        name: "Doomberg"
-        platform: substack
-        rss_url: "https://doomberg.substack.com/feed"
-      - type: x_twitter
-        handle: "@DoombergT"
-        rss_url: "https://rss.app/feeds/0jY6dRjGH0lbJFH8.xml"
-
-  - name: "Kyla Scanlon"
-    slug: kyla-scanlon
-    tags: [macro, markets, fed]
-    priority: 1
-    enabled: true
-    sources:
-      - type: newsletter
-        name: "Kyla's Newsletter"
-        platform: substack
-        rss_url: "https://kylascanlon.substack.com/feed"
-
-  - name: "Arjun Murti"
-    slug: arjun-murti
-    tags: [energy, commodities, infrastructure]
-    priority: 1
-    enabled: true
-    sources:
-      - type: newsletter
-        name: "Super-Spiked"
-        platform: substack
-        rss_url: "https://www.superspiked.com/feed"
-
-  - name: "Joseph Politano"
-    slug: apricitas
-    tags: [macro, economics, labor, inflation]
-    priority: 2
-    enabled: true
-    sources:
-      - type: newsletter
-        name: "Apricitas Economics"
-        platform: substack
-        rss_url: "https://www.apricitas.io/feed"
-
-  - name: "Eric Flaningam"
-    slug: generative-value
-    tags: [investing, quality, compounders]
-    priority: 1
-    enabled: true
-    sources:
-      - type: newsletter
-        name: "Generative Value"
-        platform: substack
-        rss_url: "https://www.generativevalue.com/feed"
-
-  # ============================================
-  # TECH & VENTURE
-  # ============================================
-
-  - name: "All-In Podcast"
-    slug: all-in
-    tags: [tech, venture, macro, politics]
-    priority: 1
-    enabled: true
-    sources:
-      - type: podcast
-        name: "All-In Podcast"
-        rss_url: "https://allinchamathjason.libsyn.com/rss"
-        hosts: ["Chamath Palihapitiya", "Jason Calacanis", "David Sacks", "David Friedberg"]
-        category: tech
-
-  - name: "Acquired"
-    slug: acquired
-    tags: [tech, business, history]
-    priority: 1
-    enabled: true
-    sources:
-      - type: podcast
-        name: "Acquired"
-        rss_url: "http://www.acquired.fm/episodes?format=rss"
-        hosts: ["Ben Gilbert", "David Rosenthal"]
-        category: tech
-
-  - name: "BG2Pod"
-    slug: bg2pod
-    tags: [tech, venture, markets]
-    priority: 1
-    enabled: true
-    sources:
-      - type: podcast
-        name: "BG2Pod"
-        rss_url: "https://anchor.fm/s/f06c2370/podcast/rss"
-        hosts: ["Brad Gerstner", "Bill Gurley"]
-        category: tech
-
-  - name: "Harry Stebbings"
-    slug: harry-stebbings
-    tags: [venture, startups, founders]
-    priority: 2
-    enabled: true
-    sources:
-      - type: podcast
-        name: "20VC"
-        rss_url: "http://feeds.libsyn.com/61840/rss"
-        hosts: ["Harry Stebbings"]
-        category: tech
-
-  - name: "a16z"
-    slug: a16z
-    tags: [tech, ai, venture]
-    priority: 2
-    enabled: true
-    sources:
-      - type: podcast
-        name: "a16z Podcast"
-        rss_url: "https://feeds.simplecast.com/JGE3yC0V"
-        hosts: ["Andreessen Horowitz"]
-        category: tech
-
-  - name: "Lenny Rachitsky"
-    slug: lenny-rachitsky
-    tags: [product, growth, tech, startups]
-    priority: 2
-    enabled: true
-    sources:
-      - type: podcast
-        name: "Lenny's Podcast"
-        rss_url: "https://api.substack.com/feed/podcast/10845.rss"
-        hosts: ["Lenny Rachitsky"]
-        category: tech
-
-  - name: "Sam Parr & Shaan Puri"
-    slug: my-first-million
-    tags: [business, startups, ideas, marketing]
-    priority: 2
-    enabled: true
-    sources:
-      - type: podcast
-        name: "My First Million"
-        rss_url: "https://feeds.megaphone.fm/HS2300184645"
-        hosts: ["Sam Parr", "Shaan Puri"]
-        category: tech
-
-  - name: "Ben Thompson"
-    slug: ben-thompson
-    tags: [tech, strategy, platforms, ai]
-    priority: 1
-    enabled: true
-    sources:
-      - type: newsletter
-        name: "Stratechery"
-        platform: substack
-        rss_url: "https://stratechery.com/feed/"
-      - type: x_twitter
-        handle: "@stratechery"
-        rss_url: "https://rss.app/feeds/WBc3sf28NbRJ6kVS.xml"
-
-  - name: "Byrne Hobart"
-    slug: byrne-hobart
-    tags: [tech, finance, strategy]
-    priority: 1
-    enabled: true
-    sources:
-      - type: newsletter
-        name: "The Diff"
-        rss_url: "https://www.thediff.co/rss/"
-
-  - name: "Packy McCormick"
-    slug: packy-mccormick
-    tags: [tech, strategy, venture, business]
-    priority: 2
-    enabled: true
-    sources:
-      - type: newsletter
-        name: "Not Boring"
-        platform: substack
-        rss_url: "https://www.notboring.co/feed"
-
-  - name: "Jamin Ball"
-    slug: jamin-ball
-    tags: [saas, software, metrics, investing]
-    priority: 1
-    enabled: true
-    sources:
-      - type: newsletter
-        name: "Clouded Judgment"
-        platform: substack
-        rss_url: "https://cloudedjudgment.substack.com/feed"
-
-  - name: "OnlyCFO"
-    slug: onlycfo
-    tags: [saas, metrics, benchmarks]
-    priority: 2
-    enabled: true
-    sources:
-      - type: newsletter
-        name: "OnlyCFO"
-        platform: substack
-        rss_url: "https://www.onlycfo.io/feed"
-
-  # ============================================
-  # AI & SEMICONDUCTORS
-  # ============================================
-
-  - name: "No Priors"
-    slug: no-priors
-    tags: [ai, venture, tech]
-    priority: 1
-    enabled: true
-    sources:
-      - type: podcast
-        name: "No Priors"
-        rss_url: "https://feeds.megaphone.fm/nopriors"
-        hosts: ["Sarah Guo", "Elad Gil"]
-        category: ai
-
-  - name: "Nathan Labenz"
-    slug: nathan-labenz
-    tags: [ai, cognitive-science]
-    priority: 1
-    enabled: true
-    sources:
-      - type: podcast
-        name: "Cognitive Revolution"
-        rss_url: "https://feeds.megaphone.fm/RINTP3108857801"
-        hosts: ["Nathan Labenz", "Erik Torenberg"]
-        category: ai
-
-  - name: "Latent Space"
-    slug: latent-space
-    tags: [ai, engineering, infrastructure]
-    priority: 1
-    enabled: true
-    sources:
-      - type: podcast
-        name: "Latent Space"
-        rss_url: "https://api.substack.com/feed/podcast/1084089.rss"
-        hosts: ["Swyx", "Alessio Fanelli"]
-        category: ai
-
-  - name: "The AI Breakdown"
-    slug: ai-breakdown
-    tags: [ai, business, tech]
-    priority: 1
-    enabled: true
-    sources:
-      - type: podcast
-        name: "The AI Breakdown"
-        rss_url: "https://anchor.fm/s/f7cac464/podcast/rss"
-        hosts: ["Nathaniel Whittemore"]
-        category: ai
-
-  - name: "Doug O'Laughlin"
-    slug: fabricated-knowledge
-    tags: [semiconductors, ai-infra, hardware, investing]
-    priority: 1
-    enabled: true
-    sources:
-      - type: newsletter
-        name: "Fabricated Knowledge"
-        platform: substack
-        rss_url: "https://www.fabricatedknowledge.com/feed"
-      - type: x_twitter
-        handle: "@DylanPatel_"
-        name: "Dylan Patel (SemiAnalysis)"
-        rss_url: "https://rss.app/feeds/hYXJJmfZGeqk5WTP.xml"
-
-  # ============================================
-  # GENERAL / MINDSET
-  # ============================================
-
-  - name: "Shane Parrish"
-    slug: shane-parrish
-    tags: [mindset, decision-making, leadership]
-    priority: 3
-    enabled: true
-    sources:
-      - type: podcast
-        name: "The Knowledge Project"
-        rss_url: "https://theknowledgeproject.libsyn.com/rss"
-        hosts: ["Shane Parrish"]
-        category: general
-
-  - name: "Sahil Bloom"
-    slug: sahil-bloom
-    tags: [mindset, founder, investing, content]
-    priority: 1
-    enabled: true
-    sources:
-      - type: newsletter
-        name: "The Curiosity Chronicle"
-        platform: substack
-        rss_url: "https://sahilbloom.substack.com/feed"
-      - type: x_twitter
-        handle: "@SahilBloom"
-        rss_url: "https://rss.app/feeds/xlIwTvJJzM2Qn4Wz.xml"
-
-  # ============================================
-  # HORMOZI ORBIT & FOUNDER EXECUTION
-  # ============================================
-
-  - name: "Alex Hormozi"
-    slug: alex-hormozi
-    tags: [founder, scaling, marketing, offers]
-    priority: 1
-    enabled: true
-    sources:
-      - type: podcast
-        name: "The Game w/ Alex Hormozi"
-        rss_url: "https://feeds.captivate.fm/the-game-alex-hormozi/"
-        hosts: ["Alex Hormozi"]
-        category: business
-      - type: x_twitter
-        handle: "@AlexHormozi"
-        rss_url: "https://rss.app/feeds/90SZJKuNCLiWPsW4.xml"
-
-  - name: "Codie Sanchez"
-    slug: codie-sanchez
-    tags: [business, acquisition, founder, scaling]
-    priority: 2
-    enabled: true
-    sources:
-      - type: newsletter
-        name: "Contrarian Thinking"
-        platform: substack
-        rss_url: "https://codiersanchez.substack.com/feed"
-      - type: x_twitter
-        handle: "@Codie_Sanchez"
-        rss_url: "https://rss.app/feeds/aMPBYtYt4LchJpdc.xml"
-
-  - name: "Justin Welsh"
-    slug: justin-welsh
-    tags: [creator, solo-business, linkedin, content]
-    priority: 2
-    enabled: true
-    sources:
-      - type: newsletter
-        name: "The Saturday Solopreneur"
-        rss_url: "https://www.justinwelsh.me/feed"
-      - type: x_twitter
-        handle: "@thejustinwelsh"
-        rss_url: "https://rss.app/feeds/gIxxX5LTH7WaCm7c.xml"
-
-  - name: "Leila Hormozi"
-    slug: leila-hormozi
-    tags: [founder, execution, team, scaling]
-    priority: 1
-    enabled: true
-    sources:
-      - type: x_twitter
-        handle: "@LeilaHormozi"
-        rss_url: "https://rss.app/feeds/MBfAC3WF42QOgRDK.xml"
-
-  - name: "Keith Wasserman"
-    slug: keith-wasserman
-    tags: [founder, compounding, execution]
-    priority: 2
-    enabled: true
-    sources:
-      - type: x_twitter
-        handle: "@Keith_Wasserman"
-        rss_url: "https://rss.app/feeds/HKrxqc1StpBDjFzu.xml"
-
-  - name: "Dan Koe"
-    slug: dan-koe
-    tags: [creator, solo-business, ai, content]
-    priority: 2
-    enabled: true
-    sources:
-      - type: x_twitter
-        handle: "@thedankoe"
-        rss_url: "https://rss.app/feeds/fEpJ2iy7kflBFiMb.xml"
-
-  # ============================================
-  # MARKETING & BRAND STRATEGY
-  # ============================================
-
-  - name: "Marketing Against the Grain"
-    slug: marketing-against-grain
-    tags: [marketing, brand, hubspot]
-    priority: 1
-    enabled: true
-    sources:
-      - type: podcast
-        name: "Marketing Against the Grain"
-        rss_url: "https://feeds.megaphone.fm/marketingagainstthegrain"
-        hosts: ["Kipp Bodnar", "Kieran Flanagan"]
-        category: marketing
-
-  - name: "Perpetual Traffic"
-    slug: perpetual-traffic
-    tags: [marketing, paid-media, meta-ads]
-    priority: 1
-    enabled: true
-    sources:
-      - type: podcast
-        name: "Perpetual Traffic"
-        rss_url: "https://feeds.captivate.fm/perpetual-traffic/"
-        hosts: ["Ralph Burns", "Kasim Aslam"]
-        category: marketing
-
-  - name: "Marketing School"
-    slug: marketing-school
-    tags: [marketing, seo, growth]
-    priority: 2
-    enabled: true
-    sources:
-      - type: podcast
-        name: "Marketing School"
-        rss_url: "https://feeds.megaphone.fm/ESHO5419936864"
-        hosts: ["Neil Patel", "Eric Siu"]
-        category: marketing
-
-  - name: "The Marketing Millennials"
-    slug: marketing-millennials
-    tags: [marketing, brand, social]
-    priority: 2
-    enabled: true
-    sources:
-      - type: podcast
-        name: "The Marketing Millennials"
-        rss_url: "https://feeds.megaphone.fm/the-marketing-millennials"
-        hosts: ["Daniel Murray"]
-        category: marketing
-
-  - name: "Nik Sharma & Moiz Ali"
-    slug: limited-supply
-    tags: [dtc, ecommerce, marketing]
-    priority: 1
-    enabled: true
-    sources:
-      - type: podcast
-        name: "Limited Supply"
-        rss_url: "https://feeds.megaphone.fm/limited-supply"
-        hosts: ["Nik Sharma", "Moiz Ali"]
-        category: marketing
-
-  - name: "Earned"
-    slug: earned
-    tags: [creator, influencer, marketing]
-    priority: 2
-    enabled: true
-    sources:
-      - type: podcast
-        name: "Earned"
-        rss_url: "https://earnedpodcast.libsyn.com/rss"
-        hosts: ["Conor Begley"]
-        category: marketing
-
-  - name: "Marketing AI Show"
-    slug: marketing-ai
-    tags: [ai, marketing, business]
-    priority: 1
-    enabled: true
-    sources:
-      - type: podcast
-        name: "Marketing AI Show"
-        rss_url: "https://feeds.megaphone.fm/marketingai"
-        hosts: ["Paul Roetzer", "Mike Kaput"]
-        category: ai
-      - type: newsletter
-        name: "Marketing AI Institute"
-        rss_url: "https://www.marketingaiinstitute.com/blog/rss.xml"
-
-  - name: "Ana Andjelic"
-    slug: ana-andjelic
-    tags: [luxury, brand, strategy, culture]
-    priority: 1
-    enabled: true
-    sources:
-      - type: newsletter
-        name: "The Sociology of Business"
-        platform: substack
-        rss_url: "https://andjelicaaa.substack.com/feed"
-
-  - name: "Rachel Karten"
-    slug: rachel-karten
-    tags: [social-media, brand, content]
-    priority: 1
-    enabled: true
-    sources:
-      - type: newsletter
-        name: "Link in Bio"
-        platform: substack
-        rss_url: "https://www.milkkarten.net/feed"
-
-  - name: "Luxury Daily"
-    slug: luxury-daily
-    tags: [luxury, brand, fashion, retail]
-    priority: 1
-    enabled: true
-    sources:
-      - type: newsletter
-        name: "Luxury Daily"
-        rss_url: "https://www.luxurydaily.com/feed/"
-
-  # ============================================
-  # CREATOR ECONOMY
-  # ============================================
-
-  - name: "Colin and Samir"
-    slug: colin-and-samir
-    tags: [creator, youtube, content]
-    priority: 2
-    enabled: true
-    sources:
-      - type: podcast
-        name: "Colin and Samir"
-        rss_url: "https://feeds.megaphone.fm/LI6529969937"
-        hosts: ["Colin Rosenblum", "Samir Chaudry"]
-        category: creator
-
-  - name: "The Skinny Confidential"
-    slug: skinny-confidential
-    tags: [creator, brand, lifestyle]
-    priority: 2
-    enabled: true
-    sources:
-      - type: podcast
-        name: "The Skinny Confidential"
-        rss_url: "https://tschimandher.libsyn.com/rss"
-        hosts: ["Lauryn Evarts", "Michael Bosstick"]
-        category: creator
-
-  - name: "Casey Lewis"
-    slug: casey-lewis
-    tags: [gen-z, trends, culture, consumer]
-    priority: 2
-    enabled: true
-    sources:
-      - type: newsletter
-        name: "After School"
-        platform: substack
-        rss_url: "https://afterschool.substack.com/feed"
-
-  - name: "Polina Pompliano"
-    slug: polina-pompliano
-    tags: [founder, profiles, mindset]
-    priority: 2
-    enabled: true
-    sources:
-      - type: newsletter
-        name: "The Profile"
-        platform: substack
-        rss_url: "https://www.readtheprofile.com/feed"
-
-  # ============================================
-  # BUSINESS & DTC
-  # ============================================
-
-  - name: "Guy Raz"
-    slug: guy-raz
-    tags: [founder, business, stories]
-    priority: 1
-    enabled: true
-    sources:
-      - type: podcast
-        name: "How I Built This"
-        rss_url: "https://rss.art19.com/how-i-built-this"
-        hosts: ["Guy Raz"]
-        category: business
-
-  - name: "Steven Bartlett"
-    slug: steven-bartlett
-    tags: [founder, mindset, business]
-    priority: 1
-    enabled: true
-    sources:
-      - type: podcast
-        name: "The Diary of a CEO"
-        rss_url: "https://rss2.flightcast.com/xmsftuzjjykcmqwolaqn6mdn"
-        hosts: ["Steven Bartlett"]
-        category: business
-
-  - name: "Amy Porterfield"
-    slug: amy-porterfield
-    tags: [business, courses, marketing]
-    priority: 2
-    enabled: true
-    sources:
-      - type: podcast
-        name: "Amy Porterfield Show"
-        rss_url: "https://feeds.megaphone.fm/YAP3268529120"
-        hosts: ["Amy Porterfield"]
-        category: business
-
-  - name: "Glossy Podcast"
-    slug: glossy
-    tags: [luxury, fashion, beauty, retail]
-    priority: 1
-    enabled: true
-    sources:
-      - type: podcast
-        name: "Glossy Podcast"
-        rss_url: "https://feeds.megaphone.fm/DIGI4036367252"
-        hosts: ["Jill Manoff"]
-        category: luxury
+- name: Andrej Karpathy
+  slug: karpathy
+  tags:
+  - ai
+  - engineering
+  - deep-learning
+  priority: 1
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/GJ3MTdI2foKlcVci.xml
+    web_url: null
+    handle: '@karpathy'
+    hosts: []
+    category: null
+    enabled: true
+- name: Elon Musk
+  slug: elon-musk
+  tags:
+  - ai
+  - tech
+  - energy
+  - space
+  priority: 1
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/vmK9bhfa4PeQAbQ3.xml
+    web_url: null
+    handle: '@elonmusk'
+    hosts: []
+    category: null
+    enabled: true
+- name: Chamath Palihapitiya
+  slug: chamath
+  tags:
+  - investing
+  - tech
+  - venture
+  - macro
+  priority: 1
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: ''
+    web_url: null
+    handle: '@chamath'
+    hosts: []
+    category: null
+    enabled: false
+- name: David Sacks
+  slug: david-sacks
+  tags:
+  - tech
+  - venture
+  - ai
+  - politics
+  priority: 1
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/ErM2WTIjBpeg8hCP.xml
+    web_url: null
+    handle: '@DavidSacks'
+    hosts: []
+    category: null
+    enabled: true
+- name: Sam Altman
+  slug: sam-altman
+  tags:
+  - ai
+  - tech
+  - founder
+  priority: 1
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/J1DmBgX7KDZSK9sH.xml
+    web_url: null
+    handle: '@sama'
+    hosts: []
+    category: null
+    enabled: true
+- name: Naval Ravikant
+  slug: naval
+  tags:
+  - investing
+  - founder
+  - mindset
+  - philosophy
+  priority: 1
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/OOrcL9OOSX4Y95kA.xml
+    web_url: null
+    handle: '@naval'
+    hosts: []
+    category: null
+    enabled: true
+- name: Paul Graham
+  slug: paul-graham
+  tags:
+  - founder
+  - startups
+  - tech
+  - writing
+  priority: 1
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/jUHBM4fICRmC4geS.xml
+    web_url: null
+    handle: '@paulg'
+    hosts: []
+    category: null
+    enabled: true
+- name: Balaji Srinivasan
+  slug: balaji
+  tags:
+  - tech
+  - macro
+  - crypto
+  - geopolitics
+  priority: 1
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/0sorhCXclVUq7Lfh.xml
+    web_url: null
+    handle: '@balajis'
+    hosts: []
+    category: null
+    enabled: true
+- name: Marc Andreessen
+  slug: marc-andreessen
+  tags:
+  - tech
+  - venture
+  - ai
+  - culture
+  priority: 1
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/L6aBt0fYj2jr3kh1.xml
+    web_url: null
+    handle: '@pmarca'
+    hosts: []
+    category: null
+    enabled: true
+- name: Garry Tan
+  slug: garry-tan
+  tags:
+  - venture
+  - startups
+  - yc
+  - tech
+  priority: 2
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/jAxP7w1LR72cJjzh.xml
+    web_url: null
+    handle: '@garrytan'
+    hosts: []
+    category: null
+    enabled: true
+- name: Shivon Zilis
+  slug: shivon-zilis
+  tags:
+  - ai
+  - neuralink
+  - tech
+  priority: 2
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: ''
+    web_url: null
+    handle: '@shivon'
+    hosts: []
+    category: null
+    enabled: false
+- name: George (10-K Diver)
+  slug: 10k-diver
+  tags:
+  - investing
+  - value
+  - mental-models
+  priority: 2
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/UWQSypJWaU6Y3r6r.xml
+    web_url: null
+    handle: '@10kdiver'
+    hosts: []
+    category: null
+    enabled: true
+- name: Litquidity
+  slug: litquidity
+  tags:
+  - finance
+  - markets
+  - humor
+  priority: 2
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: ''
+    web_url: null
+    handle: '@litquidity'
+    hosts: []
+    category: null
+    enabled: false
+- name: Brad Gerstner
+  slug: brad-gerstner
+  tags:
+  - investing
+  - tech
+  - venture
+  priority: 1
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/Z5Iq80mWzvmbNQYM.xml
+    web_url: null
+    handle: '@bradgerstner'
+    hosts: []
+    category: null
+    enabled: true
+- name: Bill Gurley
+  slug: bill-gurley
+  tags:
+  - investing
+  - venture
+  - marketplaces
+  priority: 1
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/Bf2BpCtrM46JBNkk.xml
+    web_url: null
+    handle: '@bgurley'
+    hosts: []
+    category: null
+    enabled: true
+- name: Patrick O'Shaughnessy
+  slug: patrick-oshaughnessy
+  tags:
+  - investing
+  - tech
+  - venture
+  priority: 1
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: Invest Like the Best
+    rss_url: https://feeds.megaphone.fm/investlikethebest
+    web_url: null
+    handle: null
+    hosts:
+    - Patrick O'Shaughnessy
+    category: investing
+    enabled: true
+- name: Odd Lots
+  slug: odd-lots
+  tags:
+  - macro
+  - investing
+  - markets
+  priority: 2
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: Odd Lots
+    rss_url: https://omnycontent.com/d/playlist/e73c998e-6e60-432f-8610-ae210140c5b1/8A94442E-5A74-4FA2-8B8D-AE27003A8D6B/982F5071-765C-403D-969D-AE27003A8D83/podcast.rss
+    web_url: null
+    handle: null
+    hosts:
+    - Tracy Alloway
+    - Joe Weisenthal
+    category: investing
+    enabled: true
+- name: Ted Seides
+  slug: ted-seides
+  tags:
+  - investing
+  - allocators
+  priority: 2
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: Capital Allocators
+    rss_url: https://tedseides.libsyn.com/rss
+    web_url: null
+    handle: null
+    hosts:
+    - Ted Seides
+    category: investing
+    enabled: true
+- name: We Study Billionaires
+  slug: we-study-billionaires
+  tags:
+  - investing
+  - value
+  priority: 2
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: We Study Billionaires
+    rss_url: https://feeds.megaphone.fm/PPLLC8974708240
+    web_url: null
+    handle: null
+    hosts:
+    - Stig Brodersen
+    - Clay Finck
+    category: investing
+    enabled: true
+- name: Macro Voices
+  slug: macro-voices
+  tags:
+  - macro
+  - energy
+  - commodities
+  priority: 1
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: Macro Voices
+    rss_url: https://macrovoices.podbean.com/feed.xml
+    web_url: null
+    handle: null
+    hosts:
+    - Erik Townsend
+    - Patrick Ceresna
+    category: investing
+    enabled: true
+- name: Animal Spirits
+  slug: animal-spirits
+  tags:
+  - investing
+  - markets
+  - macro
+  priority: 3
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: Animal Spirits
+    rss_url: https://animalspiritspod.libsyn.com/rss
+    web_url: null
+    handle: null
+    hosts:
+    - Michael Batnick
+    - Ben Carlson
+    category: investing
+    enabled: true
+- name: Tobias Carlisle
+  slug: tobias-carlisle
+  tags:
+  - investing
+  - value
+  - deep-value
+  priority: 3
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: The Acquirers Podcast
+    rss_url: https://anchor.fm/s/9603714/podcast/rss
+    web_url: null
+    handle: null
+    hosts:
+    - Tobias Carlisle
+    category: investing
+    enabled: true
+- name: Doomberg
+  slug: doomberg
+  tags:
+  - energy
+  - macro
+  - commodities
+  - ai-infra
+  priority: 1
+  enabled: true
+  sources:
+  - type: newsletter
+    platform: substack
+    name: Doomberg
+    rss_url: https://doomberg.substack.com/feed
+    web_url: null
+    handle: null
+    hosts: []
+    category: null
+    enabled: true
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/0jY6dRjGH0lbJFH8.xml
+    web_url: null
+    handle: '@DoombergT'
+    hosts: []
+    category: null
+    enabled: true
+- name: Kyla Scanlon
+  slug: kyla-scanlon
+  tags:
+  - macro
+  - markets
+  - fed
+  priority: 1
+  enabled: true
+  sources:
+  - type: newsletter
+    platform: substack
+    name: Kyla's Newsletter
+    rss_url: https://kylascanlon.substack.com/feed
+    web_url: null
+    handle: null
+    hosts: []
+    category: null
+    enabled: true
+- name: Arjun Murti
+  slug: arjun-murti
+  tags:
+  - energy
+  - commodities
+  - infrastructure
+  priority: 1
+  enabled: true
+  sources:
+  - type: newsletter
+    platform: substack
+    name: Super-Spiked
+    rss_url: https://www.superspiked.com/feed
+    web_url: null
+    handle: null
+    hosts: []
+    category: null
+    enabled: true
+- name: Joseph Politano
+  slug: apricitas
+  tags:
+  - macro
+  - economics
+  - labor
+  - inflation
+  priority: 2
+  enabled: true
+  sources:
+  - type: newsletter
+    platform: substack
+    name: Apricitas Economics
+    rss_url: https://www.apricitas.io/feed
+    web_url: null
+    handle: null
+    hosts: []
+    category: null
+    enabled: true
+- name: Eric Flaningam
+  slug: generative-value
+  tags:
+  - investing
+  - quality
+  - compounders
+  priority: 1
+  enabled: true
+  sources:
+  - type: newsletter
+    platform: substack
+    name: Generative Value
+    rss_url: https://www.generativevalue.com/feed
+    web_url: null
+    handle: null
+    hosts: []
+    category: null
+    enabled: true
+- name: All-In Podcast
+  slug: all-in
+  tags:
+  - tech
+  - venture
+  - macro
+  - politics
+  priority: 1
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: All-In Podcast
+    rss_url: https://allinchamathjason.libsyn.com/rss
+    web_url: null
+    handle: null
+    hosts:
+    - Chamath Palihapitiya
+    - Jason Calacanis
+    - David Sacks
+    - David Friedberg
+    category: tech
+    enabled: true
+- name: Acquired
+  slug: acquired
+  tags:
+  - tech
+  - business
+  - history
+  priority: 1
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: Acquired
+    rss_url: http://www.acquired.fm/episodes?format=rss
+    web_url: null
+    handle: null
+    hosts:
+    - Ben Gilbert
+    - David Rosenthal
+    category: tech
+    enabled: true
+- name: BG2Pod
+  slug: bg2pod
+  tags:
+  - tech
+  - venture
+  - markets
+  priority: 1
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: BG2Pod
+    rss_url: https://anchor.fm/s/f06c2370/podcast/rss
+    web_url: null
+    handle: null
+    hosts:
+    - Brad Gerstner
+    - Bill Gurley
+    category: tech
+    enabled: true
+- name: Harry Stebbings
+  slug: harry-stebbings
+  tags:
+  - venture
+  - startups
+  - founders
+  priority: 2
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: 20VC
+    rss_url: http://feeds.libsyn.com/61840/rss
+    web_url: null
+    handle: null
+    hosts:
+    - Harry Stebbings
+    category: tech
+    enabled: true
+- name: a16z
+  slug: a16z
+  tags:
+  - tech
+  - ai
+  - venture
+  priority: 2
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: a16z Podcast
+    rss_url: https://feeds.simplecast.com/JGE3yC0V
+    web_url: null
+    handle: null
+    hosts:
+    - Andreessen Horowitz
+    category: tech
+    enabled: true
+- name: Lenny Rachitsky
+  slug: lenny-rachitsky
+  tags:
+  - product
+  - growth
+  - tech
+  - startups
+  priority: 2
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: Lenny's Podcast
+    rss_url: https://api.substack.com/feed/podcast/10845.rss
+    web_url: null
+    handle: null
+    hosts:
+    - Lenny Rachitsky
+    category: tech
+    enabled: true
+- name: Sam Parr & Shaan Puri
+  slug: my-first-million
+  tags:
+  - business
+  - startups
+  - ideas
+  - marketing
+  priority: 2
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: My First Million
+    rss_url: https://feeds.megaphone.fm/HS2300184645
+    web_url: null
+    handle: null
+    hosts:
+    - Sam Parr
+    - Shaan Puri
+    category: tech
+    enabled: true
+- name: Ben Thompson
+  slug: ben-thompson
+  tags:
+  - tech
+  - strategy
+  - platforms
+  - ai
+  priority: 1
+  enabled: true
+  sources:
+  - type: newsletter
+    platform: substack
+    name: Stratechery
+    rss_url: https://stratechery.com/feed/
+    web_url: null
+    handle: null
+    hosts: []
+    category: null
+    enabled: true
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/WBc3sf28NbRJ6kVS.xml
+    web_url: null
+    handle: '@stratechery'
+    hosts: []
+    category: null
+    enabled: true
+- name: Byrne Hobart
+  slug: byrne-hobart
+  tags:
+  - tech
+  - finance
+  - strategy
+  priority: 1
+  enabled: true
+  sources:
+  - type: newsletter
+    platform: null
+    name: The Diff
+    rss_url: https://www.thediff.co/rss/
+    web_url: null
+    handle: null
+    hosts: []
+    category: null
+    enabled: true
+- name: Packy McCormick
+  slug: packy-mccormick
+  tags:
+  - tech
+  - strategy
+  - venture
+  - business
+  priority: 2
+  enabled: true
+  sources:
+  - type: newsletter
+    platform: substack
+    name: Not Boring
+    rss_url: https://www.notboring.co/feed
+    web_url: null
+    handle: null
+    hosts: []
+    category: null
+    enabled: true
+- name: Jamin Ball
+  slug: jamin-ball
+  tags:
+  - saas
+  - software
+  - metrics
+  - investing
+  priority: 1
+  enabled: true
+  sources:
+  - type: newsletter
+    platform: substack
+    name: Clouded Judgment
+    rss_url: https://cloudedjudgment.substack.com/feed
+    web_url: null
+    handle: null
+    hosts: []
+    category: null
+    enabled: true
+- name: OnlyCFO
+  slug: onlycfo
+  tags:
+  - saas
+  - metrics
+  - benchmarks
+  priority: 2
+  enabled: true
+  sources:
+  - type: newsletter
+    platform: substack
+    name: OnlyCFO
+    rss_url: https://www.onlycfo.io/feed
+    web_url: null
+    handle: null
+    hosts: []
+    category: null
+    enabled: true
+- name: No Priors
+  slug: no-priors
+  tags:
+  - ai
+  - venture
+  - tech
+  priority: 1
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: No Priors
+    rss_url: https://feeds.megaphone.fm/nopriors
+    web_url: null
+    handle: null
+    hosts:
+    - Sarah Guo
+    - Elad Gil
+    category: ai
+    enabled: true
+- name: Nathan Labenz
+  slug: nathan-labenz
+  tags:
+  - ai
+  - cognitive-science
+  priority: 1
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: Cognitive Revolution
+    rss_url: https://feeds.megaphone.fm/RINTP3108857801
+    web_url: null
+    handle: null
+    hosts:
+    - Nathan Labenz
+    - Erik Torenberg
+    category: ai
+    enabled: true
+- name: Latent Space
+  slug: latent-space
+  tags:
+  - ai
+  - engineering
+  - infrastructure
+  priority: 1
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: Latent Space
+    rss_url: https://api.substack.com/feed/podcast/1084089.rss
+    web_url: null
+    handle: null
+    hosts:
+    - Swyx
+    - Alessio Fanelli
+    category: ai
+    enabled: true
+- name: The AI Breakdown
+  slug: ai-breakdown
+  tags:
+  - ai
+  - business
+  - tech
+  priority: 1
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: The AI Breakdown
+    rss_url: https://anchor.fm/s/f7cac464/podcast/rss
+    web_url: null
+    handle: null
+    hosts:
+    - Nathaniel Whittemore
+    category: ai
+    enabled: true
+- name: Doug O'Laughlin
+  slug: fabricated-knowledge
+  tags:
+  - semiconductors
+  - ai-infra
+  - hardware
+  - investing
+  priority: 1
+  enabled: true
+  sources:
+  - type: newsletter
+    platform: substack
+    name: Fabricated Knowledge
+    rss_url: https://www.fabricatedknowledge.com/feed
+    web_url: null
+    handle: null
+    hosts: []
+    category: null
+    enabled: true
+  - type: x_twitter
+    platform: null
+    name: Dylan Patel (SemiAnalysis)
+    rss_url: https://rss.app/feeds/hYXJJmfZGeqk5WTP.xml
+    web_url: null
+    handle: '@DylanPatel_'
+    hosts: []
+    category: null
+    enabled: true
+- name: Shane Parrish
+  slug: shane-parrish
+  tags:
+  - mindset
+  - decision-making
+  - leadership
+  priority: 3
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: The Knowledge Project
+    rss_url: https://theknowledgeproject.libsyn.com/rss
+    web_url: null
+    handle: null
+    hosts:
+    - Shane Parrish
+    category: general
+    enabled: true
+- name: Sahil Bloom
+  slug: sahil-bloom
+  tags:
+  - mindset
+  - founder
+  - investing
+  - content
+  priority: 1
+  enabled: true
+  sources:
+  - type: newsletter
+    platform: substack
+    name: The Curiosity Chronicle
+    rss_url: https://sahilbloom.substack.com/feed
+    web_url: null
+    handle: null
+    hosts: []
+    category: null
+    enabled: true
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/xlIwTvJJzM2Qn4Wz.xml
+    web_url: null
+    handle: '@SahilBloom'
+    hosts: []
+    category: null
+    enabled: true
+- name: Alex Hormozi
+  slug: alex-hormozi
+  tags:
+  - founder
+  - scaling
+  - marketing
+  - offers
+  priority: 1
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: The Game w/ Alex Hormozi
+    rss_url: https://feeds.captivate.fm/the-game-alex-hormozi/
+    web_url: null
+    handle: null
+    hosts:
+    - Alex Hormozi
+    category: business
+    enabled: true
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/90SZJKuNCLiWPsW4.xml
+    web_url: null
+    handle: '@AlexHormozi'
+    hosts: []
+    category: null
+    enabled: true
+- name: Codie Sanchez
+  slug: codie-sanchez
+  tags:
+  - business
+  - acquisition
+  - founder
+  - scaling
+  priority: 2
+  enabled: true
+  sources:
+  - type: newsletter
+    platform: substack
+    name: Contrarian Thinking
+    rss_url: https://codiersanchez.substack.com/feed
+    web_url: null
+    handle: null
+    hosts: []
+    category: null
+    enabled: true
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/aMPBYtYt4LchJpdc.xml
+    web_url: null
+    handle: '@Codie_Sanchez'
+    hosts: []
+    category: null
+    enabled: true
+- name: Justin Welsh
+  slug: justin-welsh
+  tags:
+  - creator
+  - solo-business
+  - linkedin
+  - content
+  priority: 2
+  enabled: true
+  sources:
+  - type: newsletter
+    platform: null
+    name: The Saturday Solopreneur
+    rss_url: https://www.justinwelsh.me/feed
+    web_url: null
+    handle: null
+    hosts: []
+    category: null
+    enabled: true
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/gIxxX5LTH7WaCm7c.xml
+    web_url: null
+    handle: '@thejustinwelsh'
+    hosts: []
+    category: null
+    enabled: true
+- name: Leila Hormozi
+  slug: leila-hormozi
+  tags:
+  - founder
+  - execution
+  - team
+  - scaling
+  priority: 1
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/MBfAC3WF42QOgRDK.xml
+    web_url: null
+    handle: '@LeilaHormozi'
+    hosts: []
+    category: null
+    enabled: true
+- name: Keith Wasserman
+  slug: keith-wasserman
+  tags:
+  - founder
+  - compounding
+  - execution
+  priority: 2
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/HKrxqc1StpBDjFzu.xml
+    web_url: null
+    handle: '@Keith_Wasserman'
+    hosts: []
+    category: null
+    enabled: true
+- name: Dan Koe
+  slug: dan-koe
+  tags:
+  - creator
+  - solo-business
+  - ai
+  - content
+  priority: 2
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/fEpJ2iy7kflBFiMb.xml
+    web_url: null
+    handle: '@thedankoe'
+    hosts: []
+    category: null
+    enabled: true
+- name: Marketing Against the Grain
+  slug: marketing-against-grain
+  tags:
+  - marketing
+  - brand
+  - hubspot
+  priority: 1
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: Marketing Against the Grain
+    rss_url: https://feeds.megaphone.fm/marketingagainstthegrain
+    web_url: null
+    handle: null
+    hosts:
+    - Kipp Bodnar
+    - Kieran Flanagan
+    category: marketing
+    enabled: true
+- name: Perpetual Traffic
+  slug: perpetual-traffic
+  tags:
+  - marketing
+  - paid-media
+  - meta-ads
+  priority: 1
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: Perpetual Traffic
+    rss_url: https://feeds.captivate.fm/perpetual-traffic/
+    web_url: null
+    handle: null
+    hosts:
+    - Ralph Burns
+    - Kasim Aslam
+    category: marketing
+    enabled: true
+- name: Marketing School
+  slug: marketing-school
+  tags:
+  - marketing
+  - seo
+  - growth
+  priority: 2
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: Marketing School
+    rss_url: https://feeds.megaphone.fm/ESHO5419936864
+    web_url: null
+    handle: null
+    hosts:
+    - Neil Patel
+    - Eric Siu
+    category: marketing
+    enabled: true
+- name: The Marketing Millennials
+  slug: marketing-millennials
+  tags:
+  - marketing
+  - brand
+  - social
+  priority: 2
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: The Marketing Millennials
+    rss_url: https://feeds.megaphone.fm/the-marketing-millennials
+    web_url: null
+    handle: null
+    hosts:
+    - Daniel Murray
+    category: marketing
+    enabled: true
+- name: Nik Sharma & Moiz Ali
+  slug: limited-supply
+  tags:
+  - dtc
+  - ecommerce
+  - marketing
+  priority: 1
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: Limited Supply
+    rss_url: https://feeds.megaphone.fm/limited-supply
+    web_url: null
+    handle: null
+    hosts:
+    - Nik Sharma
+    - Moiz Ali
+    category: marketing
+    enabled: true
+- name: Earned
+  slug: earned
+  tags:
+  - creator
+  - influencer
+  - marketing
+  priority: 2
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: Earned
+    rss_url: https://earnedpodcast.libsyn.com/rss
+    web_url: null
+    handle: null
+    hosts:
+    - Conor Begley
+    category: marketing
+    enabled: true
+- name: Marketing AI Show
+  slug: marketing-ai
+  tags:
+  - ai
+  - marketing
+  - business
+  priority: 1
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: Marketing AI Show
+    rss_url: https://feeds.megaphone.fm/marketingai
+    web_url: null
+    handle: null
+    hosts:
+    - Paul Roetzer
+    - Mike Kaput
+    category: ai
+    enabled: true
+  - type: newsletter
+    platform: null
+    name: Marketing AI Institute
+    rss_url: https://www.marketingaiinstitute.com/blog/rss.xml
+    web_url: null
+    handle: null
+    hosts: []
+    category: null
+    enabled: true
+- name: Ana Andjelic
+  slug: ana-andjelic
+  tags:
+  - luxury
+  - brand
+  - strategy
+  - culture
+  priority: 1
+  enabled: true
+  sources:
+  - type: newsletter
+    platform: substack
+    name: The Sociology of Business
+    rss_url: https://andjelicaaa.substack.com/feed
+    web_url: null
+    handle: null
+    hosts: []
+    category: null
+    enabled: true
+- name: Rachel Karten
+  slug: rachel-karten
+  tags:
+  - social-media
+  - brand
+  - content
+  priority: 1
+  enabled: true
+  sources:
+  - type: newsletter
+    platform: substack
+    name: Link in Bio
+    rss_url: https://www.milkkarten.net/feed
+    web_url: null
+    handle: null
+    hosts: []
+    category: null
+    enabled: true
+- name: Luxury Daily
+  slug: luxury-daily
+  tags:
+  - luxury
+  - brand
+  - fashion
+  - retail
+  priority: 1
+  enabled: true
+  sources:
+  - type: newsletter
+    platform: null
+    name: Luxury Daily
+    rss_url: https://www.luxurydaily.com/feed/
+    web_url: null
+    handle: null
+    hosts: []
+    category: null
+    enabled: true
+- name: Colin and Samir
+  slug: colin-and-samir
+  tags:
+  - creator
+  - youtube
+  - content
+  priority: 2
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: Colin and Samir
+    rss_url: https://feeds.megaphone.fm/LI6529969937
+    web_url: null
+    handle: null
+    hosts:
+    - Colin Rosenblum
+    - Samir Chaudry
+    category: creator
+    enabled: true
+- name: The Skinny Confidential
+  slug: skinny-confidential
+  tags:
+  - creator
+  - brand
+  - lifestyle
+  priority: 2
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: The Skinny Confidential
+    rss_url: https://tschimandher.libsyn.com/rss
+    web_url: null
+    handle: null
+    hosts:
+    - Lauryn Evarts
+    - Michael Bosstick
+    category: creator
+    enabled: true
+- name: Casey Lewis
+  slug: casey-lewis
+  tags:
+  - gen-z
+  - trends
+  - culture
+  - consumer
+  priority: 2
+  enabled: true
+  sources:
+  - type: newsletter
+    platform: substack
+    name: After School
+    rss_url: https://afterschool.substack.com/feed
+    web_url: null
+    handle: null
+    hosts: []
+    category: null
+    enabled: true
+- name: Polina Pompliano
+  slug: polina-pompliano
+  tags:
+  - founder
+  - profiles
+  - mindset
+  priority: 2
+  enabled: true
+  sources:
+  - type: newsletter
+    platform: substack
+    name: The Profile
+    rss_url: https://www.readtheprofile.com/feed
+    web_url: null
+    handle: null
+    hosts: []
+    category: null
+    enabled: true
+- name: Guy Raz
+  slug: guy-raz
+  tags:
+  - founder
+  - business
+  - stories
+  priority: 1
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: How I Built This
+    rss_url: https://rss.art19.com/how-i-built-this
+    web_url: null
+    handle: null
+    hosts:
+    - Guy Raz
+    category: business
+    enabled: true
+- name: Steven Bartlett
+  slug: steven-bartlett
+  tags:
+  - founder
+  - mindset
+  - business
+  priority: 1
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: The Diary of a CEO
+    rss_url: https://rss2.flightcast.com/xmsftuzjjykcmqwolaqn6mdn
+    web_url: null
+    handle: null
+    hosts:
+    - Steven Bartlett
+    category: business
+    enabled: true
+- name: Amy Porterfield
+  slug: amy-porterfield
+  tags:
+  - business
+  - courses
+  - marketing
+  priority: 2
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: Amy Porterfield Show
+    rss_url: https://feeds.megaphone.fm/YAP3268529120
+    web_url: null
+    handle: null
+    hosts:
+    - Amy Porterfield
+    category: business
+    enabled: true
+- name: Glossy Podcast
+  slug: glossy
+  tags:
+  - luxury
+  - fashion
+  - beauty
+  - retail
+  priority: 1
+  enabled: true
+  sources:
+  - type: podcast
+    platform: null
+    name: Glossy Podcast
+    rss_url: https://feeds.megaphone.fm/DIGI4036367252
+    web_url: null
+    handle: null
+    hosts:
+    - Jill Manoff
+    category: luxury
+    enabled: true
+- name: Bucco Capital
+  slug: buccocapital
+  tags:
+  - investing
+  - markets
+  - finance
+  priority: 2
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/DFqvVsZraCDWqZsV.xml
+    web_url: null
+    handle: '@buccocapital'
+    hosts: []
+    category: null
+    enabled: true
+- name: Anthropic
+  slug: anthropic
+  tags:
+  - ai
+  - tech
+  - safety
+  priority: 1
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/nTpdlGFAU5hzKF3O.xml
+    web_url: null
+    handle: '@AnthropicAI'
+    hosts: []
+    category: null
+    enabled: true
+- name: OpenAI
+  slug: openai
+  tags:
+  - ai
+  - tech
+  priority: 1
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/nNDlq4wuxCaSSRTM.xml
+    web_url: null
+    handle: '@OpenAI'
+    hosts: []
+    category: null
+    enabled: true
+- name: Amjad Masad
+  slug: amjad-masad
+  tags:
+  - ai
+  - founder
+  - tech
+  - developer-tools
+  priority: 2
+  enabled: true
+  sources:
+  - type: x_twitter
+    platform: null
+    name: null
+    rss_url: https://rss.app/feeds/R7UMCTYGObjUQJKE.xml
+    web_url: null
+    handle: '@amasad'
+    hosts: []
+    category: null
+    enabled: true
