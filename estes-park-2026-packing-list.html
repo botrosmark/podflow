@@ -1,0 +1,602 @@
+<title>Estes Park 2026 — Packing & To-Do List</title>
+<style>
+  /* ============ TOKENS ============ */
+  :root {
+    /* Light — "granite & glacial lake" */
+    --paper: #f3f5f0;
+    --surface: #fbfcf9;
+    --surface-2: #eef1ea;
+    --ink: #15231e;
+    --ink-soft: #4d5c54;
+    --ink-faint: #7c8a81;
+    --line: #d9ded4;
+    --line-strong: #c3cabd;
+    --pine: #1f5c4d;      /* spruce — structure */
+    --lake: #12897a;      /* glacial teal — interactive/accent */
+    --lake-ink: #0c6558;
+    --lake-tint: #e0efeb;
+    --alpen: #b85f34;     /* alpenglow rust — urgent */
+    --alpen-tint: #f6e6dc;
+    --shadow: 0 1px 2px rgba(21,35,30,.05), 0 8px 24px -12px rgba(21,35,30,.18);
+    --font-display: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0d1310;
+      --surface: #151f1a;
+      --surface-2: #1b2721;
+      --ink: #e7ede9;
+      --ink-soft: #a3b3aa;
+      --ink-faint: #71847a;
+      --line: #26322b;
+      --line-strong: #33423a;
+      --pine: #56b49d;
+      --lake: #3fb6a4;
+      --lake-ink: #64c8b7;
+      --lake-tint: #14302a;
+      --alpen: #dc885b;
+      --alpen-tint: #2c1e16;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0d1310;
+    --surface: #151f1a;
+    --surface-2: #1b2721;
+    --ink: #e7ede9;
+    --ink-soft: #a3b3aa;
+    --ink-faint: #71847a;
+    --line: #26322b;
+    --line-strong: #33423a;
+    --pine: #56b49d;
+    --lake: #3fb6a4;
+    --lake-ink: #64c8b7;
+    --lake-tint: #14302a;
+    --alpen: #dc885b;
+    --alpen-tint: #2c1e16;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.6);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.55;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px 96px; }
+
+  /* ============ TOPO BACKDROP ============ */
+  .topo {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    opacity: .5; color: var(--pine);
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .topo { opacity: .22; } }
+  :root[data-theme="dark"] .topo { opacity: .22; }
+  .wrap, .topbar { position: relative; z-index: 1; }
+
+  /* ============ TOP BAR ============ */
+  .topbar {
+    max-width: 1080px; margin: 0 auto; padding: 18px 20px 0;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  }
+  .brandmark {
+    font-family: var(--font-mono); font-size: .72rem; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--ink-faint); font-weight: 600;
+  }
+  .toolbtns { display: flex; gap: 8px; }
+  .tbtn {
+    font: inherit; font-size: .78rem; font-weight: 600;
+    border: 1px solid var(--line-strong); background: var(--surface);
+    color: var(--ink-soft); border-radius: 999px; padding: 7px 14px;
+    cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+    transition: border-color .15s, color .15s, background .15s;
+  }
+  .tbtn:hover { color: var(--ink); border-color: var(--lake); }
+  .tbtn:focus-visible { outline: 2px solid var(--lake); outline-offset: 2px; }
+
+  /* ============ HERO ============ */
+  .hero { padding: 40px 0 28px; border-bottom: 1px solid var(--line); }
+  .eyebrow {
+    font-family: var(--font-mono); font-size: .74rem; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--lake-ink); font-weight: 600; margin: 0 0 14px;
+  }
+  h1 {
+    font-family: var(--font-display); font-weight: 800; letter-spacing: -.025em;
+    line-height: 1.02; text-wrap: balance;
+    font-size: clamp(2.4rem, 7vw, 4.4rem); margin: 0 0 6px;
+  }
+  h1 .sub { display: block; color: var(--pine); }
+  .lede {
+    font-size: clamp(1rem, 2vw, 1.15rem); color: var(--ink-soft);
+    max-width: 60ch; margin: 14px 0 0;
+  }
+  .factstrip {
+    display: flex; flex-wrap: wrap; gap: 0; margin-top: 26px;
+    border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+    background: var(--surface); box-shadow: var(--shadow);
+  }
+  .fact {
+    flex: 1 1 140px; padding: 14px 18px; border-right: 1px solid var(--line);
+  }
+  .fact:last-child { border-right: 0; }
+  .fact .k {
+    font-family: var(--font-mono); font-size: .68rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--ink-faint); margin: 0 0 4px;
+  }
+  .fact .v { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; letter-spacing: -.01em; }
+  .fact .v small { font-weight: 500; color: var(--ink-soft); font-size: .8rem; }
+
+  /* ============ GLOBAL PROGRESS ============ */
+  .progress-shell { margin-top: 22px; display: flex; align-items: center; gap: 14px; }
+  .bar { flex: 1; height: 8px; background: var(--surface-2); border-radius: 999px; overflow: hidden; border: 1px solid var(--line); }
+  .bar > i { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--pine), var(--lake)); border-radius: 999px; transition: width .35s ease; }
+  .progress-label { font-family: var(--font-mono); font-size: .82rem; color: var(--ink-soft); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  /* ============ SECTIONS ============ */
+  section { margin-top: 52px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 20px; }
+  .sec-num {
+    font-family: var(--font-mono); font-size: .8rem; font-weight: 600;
+    color: var(--lake); letter-spacing: .05em; padding-top: 4px;
+  }
+  .sec-title { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.4rem, 3.4vw, 2rem); letter-spacing: -.02em; margin: 0; text-wrap: balance; }
+  .sec-note { color: var(--ink-soft); font-size: .95rem; margin: 4px 0 0; max-width: 62ch; }
+
+  /* ============ CARD GRID ============ */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+    padding: 20px 20px 16px; box-shadow: var(--shadow); break-inside: avoid;
+  }
+  .card.span { grid-column: 1 / -1; }
+  .card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+  .card-title { font-family: var(--font-display); font-weight: 700; font-size: 1.08rem; letter-spacing: -.01em; display: flex; align-items: center; gap: 9px; margin: 0; }
+  .dot { width: 9px; height: 9px; border-radius: 3px; background: var(--lake); flex: none; }
+  .card-title .hint { font-weight: 500; font-size: .78rem; color: var(--ink-faint); font-family: var(--font-body); }
+  .badge {
+    font-family: var(--font-mono); font-size: .7rem; font-weight: 600; color: var(--ink-faint);
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px;
+    padding: 3px 9px; white-space: nowrap; font-variant-numeric: tabular-nums;
+  }
+  .badge.full { color: var(--lake-ink); border-color: var(--lake); background: var(--lake-tint); }
+
+  ul.checks { list-style: none; margin: 6px 0 0; padding: 0; }
+  ul.checks.cols { columns: 2; column-gap: 26px; }
+  @media (max-width: 520px) { ul.checks.cols { columns: 1; } }
+  ul.checks li { break-inside: avoid; margin: 0; }
+  .check { display: flex; align-items: flex-start; gap: 11px; padding: 6px 4px 6px 2px; cursor: pointer; border-radius: 8px; }
+  .check:hover { background: var(--surface-2); }
+  .check input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .box {
+    flex: none; width: 20px; height: 20px; margin-top: 1px; border-radius: 6px;
+    border: 1.5px solid var(--line-strong); background: var(--surface);
+    display: grid; place-items: center; transition: background .12s, border-color .12s;
+  }
+  .box svg { width: 12px; height: 12px; stroke: #fff; stroke-width: 3.2; fill: none; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transform: scale(.5); transition: opacity .12s, transform .12s; }
+  .check input:checked ~ .box { background: var(--lake); border-color: var(--lake); }
+  .check input:checked ~ .box svg { opacity: 1; transform: scale(1); }
+  .check input:focus-visible ~ .box { outline: 2px solid var(--lake); outline-offset: 2px; }
+  .txt { font-size: .93rem; color: var(--ink); transition: color .12s; }
+  .txt b { font-weight: 650; }
+  .txt em { font-style: normal; color: var(--ink-faint); font-size: .84rem; display: block; margin-top: 1px; }
+  .check input:checked ~ .txt { color: var(--ink-faint); text-decoration: line-through; text-decoration-color: var(--line-strong); }
+  .check input:checked ~ .txt em { text-decoration: none; }
+
+  /* ============ URGENT (BOOK NOW) ============ */
+  .book { border: 1px solid var(--alpen); background: var(--surface); border-radius: 16px; padding: 22px 22px 18px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
+  .book::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--alpen); }
+  .book .sec-head { margin-bottom: 6px; }
+  .book .sec-num, .book .dot { color: var(--alpen); }
+  .book .box { }
+  .book .check input:checked ~ .box { background: var(--alpen); border-color: var(--alpen); }
+  .book .tag { display: inline-block; font-family: var(--font-mono); font-size: .66rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--alpen); background: var(--alpen-tint); padding: 1px 7px; border-radius: 5px; margin-left: 7px; vertical-align: middle; }
+
+  /* ============ DAY TIMELINE ============ */
+  .days { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .day { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; box-shadow: var(--shadow); break-inside: avoid; }
+  .day h3 { margin: 0 0 2px; font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; letter-spacing: -.01em; }
+  .day .date { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--lake-ink); font-weight: 600; }
+  .day ul { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+  .day li { display: flex; gap: 10px; font-size: .88rem; color: var(--ink-soft); align-items: baseline; }
+  .day li .t { font-family: var(--font-mono); font-size: .74rem; color: var(--ink); font-weight: 600; flex: none; min-width: 52px; font-variant-numeric: tabular-nums; }
+  .day li .t.free { color: var(--ink-faint); font-weight: 500; }
+  .day .grab { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line-strong); font-size: .82rem; color: var(--ink-soft); }
+  .day .grab b { color: var(--pine); font-weight: 700; display: block; font-family: var(--font-mono); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 3px; }
+
+  /* ============ MOUNTAIN NOTES ============ */
+  .notes { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 8px 24px; box-shadow: var(--shadow); }
+  .notes dl { margin: 0; }
+  .noterow { display: flex; gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .noterow:last-child { border-bottom: 0; }
+  .noterow dt { flex: none; width: 120px; font-family: var(--font-mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--lake-ink); font-weight: 600; padding-top: 2px; }
+  .noterow dd { margin: 0; color: var(--ink-soft); font-size: .92rem; }
+  .noterow dd b { color: var(--ink); font-weight: 650; }
+
+  footer { margin-top: 54px; padding-top: 22px; border-top: 1px solid var(--line); color: var(--ink-faint); font-size: .82rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  footer .mono { font-family: var(--font-mono); }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+  /* ============ PRINT ============ */
+  @media print {
+    .topo, .toolbtns, .progress-shell { display: none !important; }
+    body { background: #fff; color: #000; font-size: 11px; }
+    .wrap { max-width: none; padding: 0; }
+    .card, .day, .book, .notes, .factstrip { box-shadow: none; break-inside: avoid; }
+    section { margin-top: 22px; }
+    h1 { font-size: 2rem; }
+  }
+</style>
+
+<svg class="topo" preserveAspectRatio="none" viewBox="0 0 1200 800" aria-hidden="true">
+  <g fill="none" stroke="currentColor" stroke-width="1">
+    <path d="M0 640 C 200 600 320 560 480 580 C 640 600 760 520 920 540 C 1040 555 1140 520 1200 500"/>
+    <path d="M0 560 C 180 520 340 470 500 500 C 660 530 780 440 940 470 C 1060 492 1150 450 1200 430"/>
+    <path d="M0 480 C 220 440 320 400 500 420 C 680 440 800 360 960 390 C 1080 412 1160 380 1200 360"/>
+    <path d="M0 400 C 200 360 360 330 520 350 C 680 370 820 300 980 330 C 1090 350 1170 320 1200 300"/>
+    <path d="M0 700 C 240 680 360 700 520 690 C 700 678 820 720 1000 700 C 1100 690 1160 700 1200 692"/>
+    <path d="M0 320 C 220 300 380 270 540 288 C 700 306 840 250 1000 274 C 1100 289 1180 268 1200 256"/>
+  </g>
+</svg>
+
+<div class="topbar">
+  <span class="brandmark">◭ Field Guide · RMNP</span>
+  <div class="toolbtns">
+    <button class="tbtn" id="reset" type="button" title="Uncheck everything">↺ Reset</button>
+    <button class="tbtn" id="theme" type="button" title="Toggle light / dark">◐ Theme</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">Estes Park, Colorado · With Brooke's Family</p>
+    <h1>Rocky Mountain<span class="sub">Packing &amp; To-Do</span></h1>
+    <p class="lede">Everything to book, buy, and stuff in a duffel for four days of high-alpine hiking, a Stanley Hotel ghost tour, horseback riding, nightly Mahjong — and one very small hiker named Millie.</p>
+
+    <div class="factstrip">
+      <div class="fact"><p class="k">Dates</p><p class="v">Aug 13–16<small> · 2026</small></p></div>
+      <div class="fact"><p class="k">Nights</p><p class="v">3<small> · Estes Park Resort Cabins</small></p></div>
+      <div class="fact"><p class="k">Hikes</p><p class="v">3–4<small> · Dream · Cub · Ouzel</small></p></div>
+      <div class="fact"><p class="k">Elevation</p><p class="v">7,500 ft<small> · trails to ~10k</small></p></div>
+      <div class="fact"><p class="k">Forecast</p><p class="v">75°/45°<small> · PM storms</small></p></div>
+    </div>
+
+    <div class="progress-shell">
+      <div class="bar"><i id="bar-fill"></i></div>
+      <span class="progress-label" id="prog-label">0 / 0 packed</span>
+    </div>
+  </header>
+
+  <!-- ============ BOOK & CONFIRM ============ -->
+  <section id="book">
+    <div class="book">
+      <div class="sec-head">
+        <span class="sec-num">◆</span>
+        <div>
+          <h2 class="sec-title">Book &amp; Confirm First</h2>
+          <p class="sec-note">Time-sensitive — lock these down before the trip. Rocky Mountain National Park runs on timed-entry permits in summer, and the marquee activities sell out.</p>
+        </div>
+      </div>
+      <ul class="checks cols">
+        <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>RMNP timed-entry permit</b> <span class="tag">critical</span><em>recreation.gov — need "Bear Lake Road" permits for Fri (Dream Lake) &amp; Sat (Cub Lake). Released ~1 mo ahead + next-day windows at 7pm MT.</em></span></label></li>
+        <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Park entrance pass</b><em>Separate from timed entry. America the Beautiful ($80/yr) or 1-day vehicle pass. Wild Basin (Sun, Ouzel) may not need a timed permit — verify.</em></span></label></li>
+        <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Stanley Hotel Ghost Tour</b> <span class="tag">Fri 5pm</span><em>Book online in advance &amp; confirm the head count.</em></span></label></li>
+        <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Jackson Stables horseback ride</b> <span class="tag">Sat 3:30</span><em>Reserve 1-hr ride ($87). Riders 6+; pony ride for Millie. Confirm the ~230 lb weight limit &amp; closed-toe-shoe rule.</em></span></label></li>
+        <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Dinner reservations</b><em>Ember @ the Resort (Thu 6pm) &amp; a town spot (Fri 6:30). Note party size + high chair for Millie.</em></span></label></li>
+        <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Confirm cabin check-in / out</b><em>In 4pm Thu, out 10am Sun · 1700 Colorado Peaks Dr. Gatherings at Cabin 24.</em></span></label></li>
+        <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Airport pickup logistics</b><em>KLM meets Botros family 12:30pm (WN #0468); minivan brings Millie's high chair &amp; saucer. Coordinate Bryce &amp; Ron's 6:15pm landing — 2nd ride?</em></span></label></li>
+        <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Infant car seat for Millie</b><em>Confirm the rental minivan includes one — or bring your own.</em></span></label></li>
+        <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Grocery &amp; picnic plan</b><em>Assign who buys 3 days of picnic lunches + ingredients for Megan &amp; Steven's Sat cabin dinner.</em></span></label></li>
+        <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Download offline maps</b><em>AllTrails (Dream, Cub, Ouzel) + Google Maps for Estes/RMNP — cell service is spotty in the park.</em></span></label></li>
+        <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Mahjong set</b><em>Confirm Keaton (or someone) is bringing a set for nightly play + the Thu-night lesson.</em></span></label></li>
+        <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Boarding passes &amp; IDs</b><em>Check in for flights, mobile passes saved, IDs packed.</em></span></label></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ PACKING GRID ============ -->
+  <section id="pack">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <div>
+        <h2 class="sec-title">The Packing List</h2>
+        <p class="sec-note">Tap any item to check it off — your progress saves on this device. Layers over everything: mornings start near 45°F, afternoons hit the high 70s, storms roll in by 1pm.</p>
+      </div>
+    </div>
+
+    <div class="grid">
+
+      <div class="card" data-card>
+        <div class="card-head"><h3 class="card-title"><span class="dot"></span>Clothing — Layer Up</h3><span class="badge" data-badge></span></div>
+        <ul class="checks">
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Packable rain shell</b><em>Daily afternoon thunderstorms — non-negotiable</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Fleece or puffy jacket</b><em>Cold mornings, cold nights</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Moisture-wicking tees / base layers</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Hiking pants / shorts</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Long pants or jeans</b><em>Required for horseback riding</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Smart-casual dinner outfit</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Sun hat / cap + warm beanie</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Sunglasses</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Swimsuit <em>Resort hot tub / pool</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Warm sleepwear</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Wool/synthetic hiking socks</b><em>Bring extras — dry feet = no blisters</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Underwear + everyday socks</span></label></li>
+        </ul>
+      </div>
+
+      <div class="card" data-card>
+        <div class="card-head"><h3 class="card-title"><span class="dot"></span>Footwear</h3><span class="badge" data-badge></span></div>
+        <ul class="checks">
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Broken-in hiking boots / trail runners</b><em>3 hikes — don't debut new shoes here</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Closed-toe shoes for horseback</b><em>No sandals at the stables</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Casual sneakers for town</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Sandals / slippers for the cabin</span></label></li>
+        </ul>
+      </div>
+
+      <div class="card" data-card>
+        <div class="card-head"><h3 class="card-title"><span class="dot"></span>Daypack &amp; Hiking Kit <span class="hint">per hiker</span></h3><span class="badge" data-badge></span></div>
+        <ul class="checks cols">
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Daypack (20–30 L)</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Water — 2–3 L each</b><em>Altitude dehydrates fast</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Electrolyte tabs / mix</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Trail snacks &amp; bars</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Trekking poles</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Sunscreen SPF 30+ &amp; SPF lip balm</b><em>UV is brutal at altitude — reapply</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Bug spray</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">First-aid + blister care (moleskin)</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Rain poncho / pack cover</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Headlamp <em>7:30am starts</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Binoculars <em>Elk, moose, marmots</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Downloaded trail map + whistle</span></label></li>
+        </ul>
+      </div>
+
+      <div class="card" data-card>
+        <div class="card-head"><h3 class="card-title"><span class="dot"></span>Picnic &amp; Trail Lunch <span class="hint">shared · 3 days</span></h3><span class="badge" data-badge></span></div>
+        <ul class="checks">
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Soft cooler + ice packs</b><em>Lily Lake, Cub Lake trail, Ouzel trail</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Sandwich/wrap fixings, fruit, chips</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Reusable containers, utensils, napkins</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Packable picnic blanket</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Trash / zip bags</b><em>Pack it all out — Leave No Trace</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Wet wipes / hand sanitizer</span></label></li>
+        </ul>
+      </div>
+
+      <div class="card span" data-card>
+        <div class="card-head"><h3 class="card-title"><span class="dot"></span>Baby Gear — Millie <span class="hint">cabin has high chair + saucer</span></h3><span class="badge" data-badge></span></div>
+        <ul class="checks cols">
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Hiking child carrier</b><em>Framed pack + sun canopy for the trails</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Stroller <em>Town + easy Lily Lake path</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Soft carrier for town / Mahjong nights</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Diapers, wipes, changing pad, cream</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Formula / feeding supplies + bottles</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Baby food, snacks, bibs, spoons</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Baby sunscreen + wide-brim sun hat</b><em>UV protection is critical up high</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Warm layers + footed PJs</b><em>Nights drop into the 40s</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Pack-n-play <em>Confirm if cabin has a crib</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Sound machine, sleep sack, monitor</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Baby-safe bug spray</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Toys, books, lovey, pacifiers</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Lots of extra outfits + muslin blankets</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Infant Tylenol/Motrin, thermometer, aspirator</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Flight snacks + travel toys</span></label></li>
+        </ul>
+      </div>
+
+      <div class="card" data-card>
+        <div class="card-head"><h3 class="card-title"><span class="dot"></span>Health, Toiletries &amp; Altitude</h3><span class="badge" data-badge></span></div>
+        <ul class="checks">
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Altitude plan</b><em>Hydrate hard, ease the first day, ask your doctor about acetazolamide</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Ibuprofen / acetaminophen <em>Altitude headaches</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Prescription meds</b><em>Enough for the trip + a couple extra days</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Toiletry kit (toothbrush, deodorant…)</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Moisturizer + lip balm</b><em>Dry mountain air</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Motion-sickness remedy <em>Winding roads + horseback</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Allergy meds, antacid, band-aids</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Glasses / contacts + solution</span></label></li>
+        </ul>
+      </div>
+
+      <div class="card" data-card>
+        <div class="card-head"><h3 class="card-title"><span class="dot"></span>Cabin &amp; Groceries <span class="hint">shared</span></h3><span class="badge" data-badge></span></div>
+        <ul class="checks">
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Coffee + filters, creamer, tea</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Breakfast: eggs, bread, oatmeal, fruit, yogurt</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">3 days of picnic-lunch supplies</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Sat cabin-dinner ingredients</b><em>Coordinate menu with Megan &amp; Steven</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Snacks, drinks, wine/beer for evenings</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">S'mores kit <em>If there's a firepit</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Paper towels, dish soap, sponge, foil, storage bags</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Reusable grocery bags + trash bags</span></label></li>
+        </ul>
+      </div>
+
+      <div class="card" data-card>
+        <div class="card-head"><h3 class="card-title"><span class="dot"></span>Gear, Tech &amp; Fun</h3><span class="badge" data-badge></span></div>
+        <ul class="checks">
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Phone chargers, wall bricks, car charger</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Portable battery packs</b><em>GPS + photos drain phones fast</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Headlamps / flashlights</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Camera + extra battery / SD card</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Reusable water bottles for everyone</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Mahjong set</b><em>Nightly ritual + Thu lesson from Keaton</em></span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt">Cards / board games for the cabin</span></label></li>
+          <li><label class="check"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 5"/></svg></span><span class="txt"><b>Cash for tips</b><em>Horseback guides, tour, housekeeping</em></span></label></li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ DAY BY DAY ============ -->
+  <section id="days">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <div>
+        <h2 class="sec-title">Day by Day — What to Grab</h2>
+        <p class="sec-note">The itinerary at a glance, with the one thing to remember each morning before you head out the cabin door.</p>
+      </div>
+    </div>
+
+    <div class="days">
+      <div class="day">
+        <span class="date">Thu · Aug 13</span>
+        <h3>Arrive &amp; Settle</h3>
+        <ul>
+          <li><span class="t">12:30p</span><span>Airport pickup, DEN (WN #0468)</span></li>
+          <li><span class="t">2:00p</span><span>Drive to Estes Park cabins</span></li>
+          <li><span class="t">4:00p</span><span>Check in · 1700 Colorado Peaks Dr</span></li>
+          <li><span class="t">6:00p</span><span>Dinner at Ember (walkable)</span></li>
+          <li><span class="t">6:15p</span><span>Bryce &amp; Ron land at DEN</span></li>
+          <li><span class="t free">eve</span><span>Mahjong lesson · Cabin 24</span></li>
+        </ul>
+        <p class="grab"><b>Grab</b> Car seat + Millie's snacks; warm layers for the first cold night.</p>
+      </div>
+
+      <div class="day">
+        <span class="date">Fri · Aug 14</span>
+        <h3>Dream Lake &amp; Ghosts</h3>
+        <ul>
+          <li><span class="t">7:30a</span><span>Hike Dream Lake · 2 mi, 459 ft</span></li>
+          <li><span class="t free">noon</span><span>Picnic at Lily Lake</span></li>
+          <li><span class="t free">pm</span><span>Shop downtown Estes Park</span></li>
+          <li><span class="t">5:00p</span><span>Ghost Tour · Stanley Hotel</span></li>
+          <li><span class="t">6:30p</span><span>Dinner reservation in town</span></li>
+          <li><span class="t free">eve</span><span>Mahjong</span></li>
+        </ul>
+        <p class="grab"><b>Grab</b> Daypack, rain shell, child carrier + a warm layer for the evening ghost tour.</p>
+      </div>
+
+      <div class="day">
+        <span class="date">Sat · Aug 15</span>
+        <h3>Cub Lake &amp; Horses</h3>
+        <ul>
+          <li><span class="t">7:30a</span><span>Hike Cub Lake · 5 mi, 700 ft</span></li>
+          <li><span class="t free">trail</span><span>Picnic lunch en route</span></li>
+          <li><span class="t">3:30p</span><span>Horseback · Jackson Stables</span></li>
+          <li><span class="t">6:00p</span><span>Megan &amp; Steven cook · Cabin 24</span></li>
+          <li><span class="t free">eve</span><span>Mahjong</span></li>
+        </ul>
+        <p class="grab"><b>Grab</b> Extra water + blister care for the longer hike; closed-toe shoes, long pants &amp; tip cash for the stables.</p>
+      </div>
+
+      <div class="day">
+        <span class="date">Sun · Aug 16</span>
+        <h3>Check Out &amp; Falls</h3>
+        <ul>
+          <li><span class="t">10:00a</span><span>Check out of cabins</span></li>
+          <li><span class="t free">opt</span><span>Ouzel Falls · 5.5 mi, 984 ft</span></li>
+          <li><span class="t free">trail</span><span>Lunch on the trail</span></li>
+          <li><span class="t free">pm</span><span>Drive back to Denver</span></li>
+        </ul>
+        <p class="grab"><b>Grab</b> Pack up &amp; take out all trash the night before; road snacks + chargers for the drive.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MOUNTAIN NOTES ============ -->
+  <section id="notes">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <div>
+        <h2 class="sec-title">Mountain Notes</h2>
+        <p class="sec-note">A few things the mountains will hold you to.</p>
+      </div>
+    </div>
+    <div class="notes">
+      <dl>
+        <div class="noterow"><dt>Altitude</dt><dd>Town sits at <b>7,522 ft</b>; trailheads climb toward 9,000–10,000 ft. Hydrate aggressively, take the first day easy, and watch for headaches or nausea.</dd></div>
+        <div class="noterow"><dt>Storms</dt><dd>Afternoon thunderstorms are <b>near-daily</b> in August — the 7:30am hike starts are on purpose. Aim to be below treeline by early afternoon.</dd></div>
+        <div class="noterow"><dt>Temps</dt><dd>Days in the <b>mid-70s to low-80s</b>, nights down to the <b>low-40s</b>. Every hiker (and Millie) needs a full layering kit.</dd></div>
+        <div class="noterow"><dt>Wildlife</dt><dd>This is elk and black-bear country. Keep <b>75+ ft</b> from elk and moose, never feed wildlife, and store all food — including picnic leftovers.</dd></div>
+        <div class="noterow"><dt>Connectivity</dt><dd>Cell service is <b>spotty to none</b> inside RMNP. Download maps offline and tell someone your trail plan each morning.</dd></div>
+        <div class="noterow"><dt>Leave No Trace</dt><dd>Pack out <b>everything</b> from the three picnics — the trails stay beautiful because everyone does.</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <footer>
+    <span>Estes Park · Rocky Mountain National Park · August 13–16, 2026</span>
+    <span class="mono" id="foot-count">— packed</span>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var KEY = "estes2026:";
+  var store = (function () {
+    try { var t = "__t"; localStorage.setItem(t, "1"); localStorage.removeItem(t); return localStorage; }
+    catch (e) { return null; }
+  })();
+
+  var boxes = Array.prototype.slice.call(document.querySelectorAll(".check input[type=checkbox]"));
+
+  // Stable key per item from its text — survives reordering.
+  boxes.forEach(function (b, i) {
+    var label = b.closest(".check").querySelector(".txt");
+    var slug = (label ? label.textContent : "item") .replace(/\s+/g, " ").trim().slice(0, 60);
+    b.dataset.k = KEY + i + ":" + slug;
+    if (store && store.getItem(b.dataset.k) === "1") b.checked = true;
+    b.addEventListener("change", function () {
+      if (store) {
+        if (b.checked) store.setItem(b.dataset.k, "1");
+        else store.removeItem(b.dataset.k);
+      }
+      update();
+    });
+  });
+
+  function update() {
+    // Per-card badges
+    document.querySelectorAll("[data-card]").forEach(function (card) {
+      var ins = card.querySelectorAll(".check input");
+      var done = 0;
+      ins.forEach ? ins.forEach(step) : Array.prototype.forEach.call(ins, step);
+      function step(x) { if (x.checked) done++; }
+      var badge = card.querySelector("[data-badge]");
+      if (badge) {
+        badge.textContent = done + "/" + ins.length;
+        badge.classList.toggle("full", done === ins.length && ins.length > 0);
+      }
+    });
+    // Global
+    var total = boxes.length;
+    var done = boxes.filter(function (b) { return b.checked; }).length;
+    var pct = total ? Math.round((done / total) * 100) : 0;
+    document.getElementById("bar-fill").style.width = pct + "%";
+    document.getElementById("prog-label").textContent = done + " / " + total + " packed";
+    document.getElementById("foot-count").textContent = pct + "% packed";
+  }
+
+  document.getElementById("reset").addEventListener("click", function () {
+    boxes.forEach(function (b) { b.checked = false; if (store) store.removeItem(b.dataset.k); });
+    update();
+  });
+
+  // Theme toggle (persisted)
+  var root = document.documentElement;
+  var tkey = KEY + "theme";
+  if (store) { var saved = store.getItem(tkey); if (saved) root.setAttribute("data-theme", saved); }
+  document.getElementById("theme").addEventListener("click", function () {
+    var isDark = getComputedStyle(root).getPropertyValue("--paper").trim().indexOf("#0d") === 0
+      || root.getAttribute("data-theme") === "dark";
+    var next = isDark ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    if (store) store.setItem(tkey, next);
+  });
+
+  update();
+})();
+</script>
